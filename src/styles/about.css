@@ -1,0 +1,8 @@
+.about-section { background: white; }
+.about-layout { display: grid; grid-template-columns: .3fr 1fr; gap: 5vw; }
+.about-content h2 { margin-top: 20px; font-size: clamp(46px, 7.4vw, 100px); line-height: .94; letter-spacing: -.08em; font-weight: 950; }
+.about-content h2 span { color: var(--color-blue); }
+.about-bottom { display: grid; grid-template-columns: 1.2fr .8fr; gap: 5vw; margin-top: 48px; max-width: 800px; }
+.about-bottom p { color: var(--color-muted); font-size: 15px; }
+.about-bottom .about-lead { color: var(--color-ink); font-size: clamp(18px, 2vw, 24px); line-height: 1.35; font-weight: 600; }
+.about-mantra { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 52px; padding-top: 20px; border-top: 1px solid var(--color-line); color: var(--color-blue); font-size: 11px; font-weight: 900; letter-spacing: .12em; }

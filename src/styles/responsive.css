@@ -1,0 +1,53 @@
+@media (max-width: 900px) {
+  .nav-links { gap: 14px; }
+  .nav-links a { font-size: 10px; }
+  .hero-grid { grid-template-columns: 1fr .8fr; }
+  .hero-visual { min-height: 370px; }
+  .skills-grid { grid-template-columns: repeat(3, 1fr); }
+  .about-layout { grid-template-columns: 1fr; gap: 28px; }
+}
+@media (max-width: 700px) {
+  html { scroll-padding-top: 70px; }
+  .nav-shell { min-height: 70px; }
+  .menu-toggle { display: flex; flex-direction: column; gap: 5px; width: 42px; height: 42px; align-items: center; justify-content: center; }
+  .menu-toggle > span:not(.sr-only) { width: 20px; height: 1px; background: var(--color-ink); }
+  .nav-links { position: absolute; top: 69px; left: 0; right: 0; display: none; flex-direction: column; align-items: stretch; gap: 0; padding: 12px var(--gutter) 22px; background: var(--color-bg); border-bottom: 1px solid var(--color-line); }
+  .nav-links.is-open { display: flex; }
+  .nav-links a { padding: 13px 0; font-size: 13px; }
+  .nav-links .nav-cta { margin-top: 8px; padding: 14px; text-align: center; }
+  .hero { min-height: auto; padding: 70px 0 100px; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-kicker { margin-top: 34px; }
+  .hero h1 { font-size: clamp(66px, 18vw, 112px); }
+  .hero-visual { min-height: 290px; margin-top: 10px; }
+  .visual-placeholder { width: min(70vw, 300px); }
+  .hero-visual-label { top: 0; }
+  .hero-index { bottom: 0; }
+  .scroll-cue { bottom: 24px; }
+  .about-bottom { grid-template-columns: 1fr; gap: 18px; margin-top: 30px; }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  .skill-item { min-height: 245px; padding: 14px; }
+  .skill-art { height: 85px; }
+  .skill-item h3 { font-size: 15px; }
+  .weekend-heading { grid-template-columns: 48px 1fr 20px; gap: 12px; padding: 20px 0; }
+  .weekend-number { font-size: 28px; }
+  .weekend-title strong { font-size: 18px; }
+  .weekend-content { padding-left: 0; }
+  .programme-day { grid-template-columns: 85px 1fr; gap: 10px; }
+  .day-sessions { flex-direction: column; align-items: stretch; }
+  .session-item { justify-content: space-between; flex-wrap: wrap; }
+  .programme-note { flex-direction: column; gap: 7px; }
+  .sponsor-track { grid-template-columns: repeat(2, 1fr); }
+  .display-topline, .display-bottomline { font-size: 7px; }
+  .footer-main { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-wrap: wrap; }
+}
+@media (max-width: 390px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .skill-item { min-height: 220px; }
+  .footer-main { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
