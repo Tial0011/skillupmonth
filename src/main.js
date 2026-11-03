@@ -52,6 +52,14 @@ menu?.querySelectorAll("a").forEach(link => {
   });
 });
 
+document.addEventListener("keydown", event => {
+  if (event.key !== "Escape" || menuToggle?.getAttribute("aria-expanded") !== "true") return;
+  menu.classList.remove("is-open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Open navigation");
+  menuToggle.focus();
+});
+
 document.querySelectorAll(".weekend-heading").forEach(button => {
   button.addEventListener("click", () => {
     const expanded = button.getAttribute("aria-expanded") === "true";
@@ -81,30 +89,33 @@ if ("IntersectionObserver" in window) {
   sections.forEach(section => observer.observe(section));
 }
 
-const sponsorTrack = document.querySelector("#sponsor-track");
-document.querySelectorAll(".sponsor-arrow").forEach(button => {
-  button.addEventListener("click", () => {
-    const direction = button.classList.contains("sponsor-next") ? 1 : -1;
-    sponsorTrack.scrollBy({ left: direction * sponsorTrack.clientWidth * 0.78, behavior: "smooth" });
-  });
+let heroScene;
+let disposeMotion = () => {};
+let experienceCancelled = false;
+
+const loadExperience = async () => {
+  const sceneModule = window.matchMedia("(max-width: 760px)").matches
+    ? Promise.resolve(null)
+    : import("./experience/heroScene.js");
+  const [motionModule, resolvedSceneModule] = await Promise.all([
+    import("./experience/motion.js"),
+    sceneModule
+  ]);
+  if (experienceCancelled) return;
+  if (resolvedSceneModule && !window.matchMedia("(max-width: 760px)").matches) {
+    heroScene = resolvedSceneModule.initHeroScene(document.querySelector("#hero-3d-scene"));
+  }
+  disposeMotion = motionModule.initMotion(heroScene);
+};
+
+loadExperience().catch(error => {
+  console.warn("Enhanced motion could not initialize; keeping the interactive page available.", error);
 });
 
-if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.documentElement.classList.add("reveal-ready");
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("is-visible");
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.12 });
-  document.querySelectorAll(".section-index, .hero-copy, .about-content, .section-heading, .sponsors-heading, .cta-inner, .skill-item").forEach((element, index) => {
-    element.setAttribute("data-reveal", "");
-    if (element.classList.contains("skill-item")) element.style.transitionDelay = `${(index % 4) * 55}ms`;
-    revealObserver.observe(element);
-  });
-} else {
-  document.querySelectorAll("[data-reveal]").forEach(element => element.classList.add("is-visible"));
-}
+window.addEventListener("pagehide", () => {
+  experienceCancelled = true;
+  disposeMotion();
+  heroScene?.dispose();
+}, { once: true });
 
 document.querySelector(".app-loading")?.remove();

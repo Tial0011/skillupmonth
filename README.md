@@ -1,68 +1,97 @@
-# UMSA Skill-Up Month — Phase 2
+# UMSA Skill-Up Month
 
-A modular, responsive single-page Vanilla JavaScript website for UMSA Skill-Up Month 2026. Phase 2 adds the light-futuristic visual system, editorial layouts, responsive interactions, and production styling while retaining the Phase 1 component and data architecture.
+A responsive, immersive single-page Vanilla JavaScript website for UMSA Skill-Up Month 2026. The experience combines an original procedural Three.js hero sculpture with GSAP and ScrollTrigger motion while preserving the original modular component and editable data architecture.
 
 ## Technology
-- HTML5
-- CSS3
-- Vanilla JavaScript ES modules
-- Vite (development server and production build)
 
-No React or frontend framework is used.
+- HTML5, CSS3 and Vanilla JavaScript ES modules
+- Three.js / WebGL for one visibility-aware procedural hero scene
+- GSAP and ScrollTrigger for section reveals, scroll-linked scene movement and interactions
+- Vite for development and production builds
+- No React or frontend framework
+
+The hero sculpture uses generated geometry and built-in lighting; no external 3D assets are required. If WebGL is unavailable or its context is lost, the CSS hero artwork remains visible. Motion is reduced when the operating system requests reduced motion, and the scene pauses when off screen or when the document is hidden.
 
 ## Requirements
-- Node.js 18+ recommended
-- npm
 
-## Install
+- Node.js 18 or newer
+- npm
+- A modern browser with WebGL for the 3D hero (the rest of the site works without WebGL)
+
+## 1. Installation
+
+From the project directory:
+
 ```bash
 npm install
 ```
 
-## Run locally
+## 2. Development server
+
 ```bash
 npm run dev
 ```
-Open the local URL printed by Vite (usually http://localhost:5173).
 
-## Production build
+Open the local URL printed by Vite (usually `http://localhost:5173`).
+
+## 3. Production build
+
 ```bash
 npm run build
 ```
-The production output is written to `dist/`.
 
-## Preview production build
+The optimized site is written to `dist/`.
+
+## 4. Production preview
+
 ```bash
 npm run preview
 ```
 
-## Netlify deployment
-1. Push this project to a Git repository or upload the project to Netlify.
-2. Set the build command to `npm run build`.
-3. Set the publish directory to `dist`.
-4. Deploy.
+Open the local URL printed by Vite to check the production build.
 
-## Updating the website
+## 5. Netlify deployment
 
-### Skills
-Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description.
+Deploy the repository to Netlify with:
 
-### Programme calendar
-Edit `src/data/programme.js`. The supplied November 2026 calendar has been transcribed into four weekend groups. Preserve the concurrent-session notes and the note about Saturday, 28 November.
+- **Build command:** `npm run build`
+- **Publish directory:** `dist`
 
-### Sponsors
-Edit `src/data/sponsors.js`. Add the approved sponsor name, local logo path and tier. Put logo files in `public/logos/` and reference them with a path such as `/logos/example.svg`.
+Netlify installs the dependencies from `package-lock.json` before running the build.
 
-### Registration link
-Edit `registrationUrl` in `src/config/siteConfig.js`. If it is empty, the CTA points visitors to the programme section and displays a note that the official link is pending.
+## 6. Updating skills
 
-### Social links and contact
-Edit `socialLinks` and `contactEmail` in `src/config/siteConfig.js` when official details are available.
+Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. The skills component and category-accent styling use these entries; preserve unique IDs for stable in-page anchors.
 
-## Phase 2 design
-The visual language uses spacious editorial typography, warm-white and silver surfaces, electric-blue accents, varied skill artwork, a collapsible four-weekend schedule, and a horizontal sponsor gallery. Reference research included Awwwards typography selections, Godly's curated design inspiration, and A1 Gallery's contemporary agency and editorial showcases. The resulting design is original and does not reproduce any one reference.
+## 7. Editing the programme
 
-The hero visual is intentionally a complete CSS placeholder in the `#hero-3d-scene` container; the advanced Three.js/WebGL scene and GSAP motion system are reserved for Phase 3.
+Edit `src/data/programme.js`. Keep each session in its correct weekend/day and preserve the `note` field for concurrent or combined sessions. `programmeNote` contains the calendar-wide note.
+
+## 8. Adding sponsor logos
+
+Place approved logo assets in `public/logos/`, then update `src/data/sponsors.js` with the sponsor `name`, relative public path (for example `/logos/example.svg`) and optional `tier`. Logos render with `object-fit: contain` to preserve their original proportions. Replace the sample entries only with confirmed partner details.
+
+## 9. Updating registration links
+
+Set `registrationUrl` in `src/config/siteConfig.js` to the official registration URL. Until then, the CTA directs visitors to the programme and retains its pending-link note.
+
+## 10. Updating social links
+
+Set the official URLs in `socialLinks` in `src/config/siteConfig.js`. The footer displays links that have a URL; empty values remain hidden. `contactEmail` is available for approved contact information.
+
+## Project structure
+
+- `src/components/` — page sections and navigation
+- `src/data/` — editable skills, programme and sponsor content
+- `src/experience/heroScene.js` — procedural Three.js sculpture and resource lifecycle
+- `src/experience/motion.js` — GSAP, ScrollTrigger, skill tilt, cursor and sponsor motion
+- `src/styles/` — design tokens and modular section styles
+- `public/` — static assets
+
+The hero scene mounts at `#hero-3d-scene`. It uses generated geometry, capped pixel ratio, visibility-aware rendering, a CSS-only mobile alternative, context-loss fallback, and disposal on page exit.
+
+The Three.js runtime is split into its own asynchronous production chunk and is only requested on wider screens. The core library is approximately 137 kB gzipped; `chunkSizeWarningLimit` is set just above its minified size so Vite does not flag this intentionally lazy-loaded vendor chunk.
 
 ## Source accuracy
-Programme entries and dates are based on the supplied UMSA Skill-Up Month November 2026 programme calendar. No session times beyond the calendar's morning/afternoon/evening labels, venues, facilitators, sponsor identities or registration URL have been invented.
+
+The November 2026 dates, sessions and skill entries remain in the supplied data files. No session times beyond the existing morning/afternoon/evening labels, venues, facilitators, sponsor identities, registration URL or social accounts have been invented.

@@ -45,6 +45,8 @@
   overflow: hidden;
   background: linear-gradient(135deg, color-mix(in srgb, var(--skill-accent) 9%, white), #f9fafc 75%);
   color: var(--skill-accent);
+  transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transform-style: preserve-3d;
   transition: background var(--duration-medium), transform var(--duration-medium);
 }
 .skill-item:hover .skill-art { background: linear-gradient(135deg, color-mix(in srgb, var(--skill-accent) 15%, white), #fff 80%); }

@@ -19,6 +19,3 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
 .button-secondary:hover { border-color: var(--color-ink); background: white; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .app-loading { padding: 30px; color: var(--color-muted); }
-
-.reveal-ready [data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
-.reveal-ready [data-reveal].is-visible { opacity: 1; transform: translateY(0); }

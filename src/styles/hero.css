@@ -51,8 +51,9 @@
   content: "";
   z-index: -1;
 }
-.hero-visual-label { position: absolute; top: 6%; right: 0; color: #7e8999; font-size: 8px; font-weight: 700; letter-spacing: .19em; }
-.visual-placeholder { position: relative; width: min(32vw, 390px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 34% 26%, #fff 0 7%, #edf2fb 27%, #d7e1f3 60%, #c3d0e7 100%); box-shadow: inset -26px -30px 60px rgba(45,74,130,.13), 0 40px 90px rgba(39,79,150,.13); }
+.hero-visual-label { position: absolute; z-index: 2; top: 6%; right: 0; color: #7e8999; font-size: 8px; font-weight: 700; letter-spacing: .19em; }
+.visual-placeholder { position: relative; z-index: 0; width: min(32vw, 390px); aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 34% 26%, #fff 0 7%, #edf2fb 27%, #d7e1f3 60%, #c3d0e7 100%); box-shadow: inset -26px -30px 60px rgba(45,74,130,.13), 0 40px 90px rgba(39,79,150,.13); transition: opacity .65s ease, transform .8s cubic-bezier(.2,.75,.25,1); }
+.hero-visual.webgl-ready .visual-placeholder { opacity: 0; transform: scale(.9); }
 .visual-placeholder::before, .visual-placeholder::after { position: absolute; border: 1px solid rgba(36,95,232,.15); border-radius: 50%; content: ""; }
 .visual-placeholder::before { inset: 9%; }
 .visual-placeholder::after { inset: 17%; border-color: rgba(255,255,255,.85); }
@@ -62,7 +63,8 @@
 .orbit-one { inset: -8%; transform: rotate(24deg) scaleY(.42); }
 .orbit-two { inset: 4%; border-color: rgba(255,255,255,.8); transform: rotate(-38deg) scaleY(.68); }
 .visual-caption { position: absolute; bottom: 8%; color: #506384; font-size: 8px; font-weight: 700; letter-spacing: .22em; }
-.hero-index { position: absolute; right: 0; bottom: 2%; color: var(--color-muted); font-size: 9px; letter-spacing: .16em; }
-#hero-3d-scene canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-index { position: absolute; z-index: 2; right: 0; bottom: 2%; color: var(--color-muted); font-size: 9px; letter-spacing: .16em; }
+#hero-3d-scene canvas { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; transition: opacity .8s ease; }
+#hero-3d-scene.webgl-ready canvas { opacity: 1; }
 .scroll-cue { position: absolute; bottom: 28px; left: var(--gutter); display: flex; align-items: center; gap: 12px; color: var(--color-muted); font-size: 8px; font-weight: 700; letter-spacing: .18em; }
 .scroll-line { width: 34px; height: 1px; background: var(--color-blue); }
