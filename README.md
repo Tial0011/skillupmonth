@@ -1,6 +1,6 @@
-# UMSA Skill-Up Month — Phase 1
+# UMSA Skill-Up Month — Phase 2
 
-A modular, single-page Vanilla JavaScript website foundation for UMSA Skill-Up Month 2026.
+A modular, responsive single-page Vanilla JavaScript website for UMSA Skill-Up Month 2026. Phase 2 adds the light-futuristic visual system, editorial layouts, responsive interactions, and production styling while retaining the Phase 1 component and data architecture.
 
 ## Technology
 - HTML5
@@ -59,8 +59,10 @@ Edit `registrationUrl` in `src/config/siteConfig.js`. If it is empty, the CTA po
 ### Social links and contact
 Edit `socialLinks` and `contactEmail` in `src/config/siteConfig.js` when official details are available.
 
-## Phase 1 scope
-This phase establishes the full content structure, modular components, foundational styling and basic interactions. The advanced Three.js/WebGL hero, GSAP motion system and final visual effects are intentionally reserved for Phase 3.
+## Phase 2 design
+The visual language uses spacious editorial typography, warm-white and silver surfaces, electric-blue accents, varied skill artwork, a collapsible four-weekend schedule, and a horizontal sponsor gallery. Reference research included Awwwards typography selections, Godly's curated design inspiration, and A1 Gallery's contemporary agency and editorial showcases. The resulting design is original and does not reproduce any one reference.
+
+The hero visual is intentionally a complete CSS placeholder in the `#hero-3d-scene` container; the advanced Three.js/WebGL scene and GSAP motion system are reserved for Phase 3.
 
 ## Source accuracy
 Programme entries and dates are based on the supplied UMSA Skill-Up Month November 2026 programme calendar. No session times beyond the calendar's morning/afternoon/evening labels, venues, facilitators, sponsor identities or registration URL have been invented.

@@ -19,9 +19,13 @@ export function Sponsors() {
           <h2 id="sponsors-title">POWERED BY PARTNERS<br><span>WHO BELIEVE IN POSSIBILITIES.</span></h2>
           <p>We celebrate the organisations and partners supporting a culture of learning, creativity and growth.</p>
         </div>
-        <div class="sponsor-display">
+        <div class="sponsor-display" aria-label="Sponsor logo carousel">
           <div class="display-topline"><span>OUR PARTNERS</span><span>UMSA · SKILL-UP MONTH 2026</span></div>
-          <div class="sponsor-track">${logos}</div>
+          <div class="sponsor-carousel">
+            <button class="sponsor-arrow sponsor-previous" type="button" aria-label="Scroll sponsors left">←</button>
+            <div class="sponsor-track" id="sponsor-track" tabindex="0">${logos}</div>
+            <button class="sponsor-arrow sponsor-next" type="button" aria-label="Scroll sponsors right">→</button>
+          </div>
           <div class="display-bottomline"><span>PARTNERSHIP / COMMUNITY / POSSIBILITY</span><span>LOGO SHOWCASE</span></div>
         </div>
       </div>

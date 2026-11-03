@@ -40,6 +40,7 @@ const menu = document.querySelector(".nav-links");
 menuToggle?.addEventListener("click", () => {
   const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
   menuToggle.setAttribute("aria-expanded", String(!isOpen));
+  menuToggle.setAttribute("aria-label", isOpen ? "Open navigation" : "Close navigation");
   menu.classList.toggle("is-open", !isOpen);
 });
 
@@ -47,6 +48,7 @@ menu?.querySelectorAll("a").forEach(link => {
   link.addEventListener("click", () => {
     menu.classList.remove("is-open");
     menuToggle?.setAttribute("aria-expanded", "false");
+    menuToggle?.setAttribute("aria-label", "Open navigation");
   });
 });
 
@@ -77,6 +79,32 @@ if ("IntersectionObserver" in window) {
     });
   }, { rootMargin: "-35% 0px -55% 0px" });
   sections.forEach(section => observer.observe(section));
+}
+
+const sponsorTrack = document.querySelector("#sponsor-track");
+document.querySelectorAll(".sponsor-arrow").forEach(button => {
+  button.addEventListener("click", () => {
+    const direction = button.classList.contains("sponsor-next") ? 1 : -1;
+    sponsorTrack.scrollBy({ left: direction * sponsorTrack.clientWidth * 0.78, behavior: "smooth" });
+  });
+});
+
+if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.documentElement.classList.add("reveal-ready");
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      revealObserver.unobserve(entry.target);
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".section-index, .hero-copy, .about-content, .section-heading, .sponsors-heading, .cta-inner, .skill-item").forEach((element, index) => {
+    element.setAttribute("data-reveal", "");
+    if (element.classList.contains("skill-item")) element.style.transitionDelay = `${(index % 4) * 55}ms`;
+    revealObserver.observe(element);
+  });
+} else {
+  document.querySelectorAll("[data-reveal]").forEach(element => element.classList.add("is-visible"));
 }
 
 document.querySelector(".app-loading")?.remove();

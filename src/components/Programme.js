@@ -4,17 +4,17 @@ import { escapeHTML } from "../utils/helpers.js";
 export function Programme() {
   const weekends = programme.map((week, index) => `
     <article class="weekend-panel">
-      <button class="weekend-heading" type="button" aria-expanded="${index === 0 ? "true" : "false"}">
+      <button class="weekend-heading" type="button" aria-expanded="${index === 0 ? "true" : "false"}" aria-controls="${escapeHTML(week.id)}-content">
         <span class="weekend-number">0${index + 1}</span>
         <span class="weekend-title"><strong>${escapeHTML(week.title)}</strong><small>${escapeHTML(week.dates)} · NOVEMBER 2026</small></span>
         <span class="weekend-toggle" aria-hidden="true">${index === 0 ? "−" : "+"}</span>
       </button>
-      <div class="weekend-content" ${index === 0 ? "" : "hidden"}>
+      <div class="weekend-content" id="${escapeHTML(week.id)}-content" ${index === 0 ? "" : "hidden"}>
         ${week.days.map(day => `
           <div class="programme-day">
             <div class="day-label"><strong>${escapeHTML(day.day)}</strong>${day.period ? `<span>${escapeHTML(day.period)}</span>` : ""}</div>
             <div class="day-sessions">
-              ${day.sessions.map(session => `<div class="session-item"><span>${escapeHTML(session.name)}</span>${session.note ? `<small>${escapeHTML(session.note)}</small>` : ""}</div>`).join("")}
+              ${day.sessions.map(session => `<div class="session-item${session.note === "Concurrent" ? " is-concurrent" : ""}"><span>${escapeHTML(session.name)}</span>${session.note ? `<small>${escapeHTML(session.note)}</small>` : ""}</div>`).join("")}
             </div>
           </div>`).join("")}
       </div>

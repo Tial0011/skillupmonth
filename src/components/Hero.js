@@ -15,12 +15,12 @@ export function Hero() {
             <a class="button button-secondary" href="#programme">Explore the programme <span aria-hidden="true">↘</span></a>
           </div>
         </div>
-        <div class="hero-visual" aria-label="Reserved visual area for the future interactive 3D experience">
+        <div class="hero-visual" id="hero-3d-scene" aria-label="Reserved visual area for the future interactive 3D experience">
           <div class="hero-visual-label">THE NEXT CHAPTER STARTS HERE</div>
           <div class="visual-placeholder">
             <span class="visual-orbit orbit-one"></span>
             <span class="visual-orbit orbit-two"></span>
-            <span class="visual-core">S<span>+</span></span>
+            <span class="visual-core" aria-hidden="true">S<span>+</span></span>
             <span class="visual-caption">LEARN · CREATE · GROW</span>
           </div>
           <span class="hero-index">01 / 08</span>
