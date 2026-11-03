@@ -1,6 +1,9 @@
 import { siteConfig } from "../config/siteConfig.js";
+import { skills } from "../data/skills.js";
 
 export function Hero() {
+  const skillNames = skills.map(skill => skill.name).join(", ");
+
   return `
     <section class="hero section" id="home" aria-labelledby="hero-title">
       <div class="hero-grid container">
@@ -15,7 +18,7 @@ export function Hero() {
             <a class="button button-secondary" href="#programme">Explore the programme <span aria-hidden="true">↘</span></a>
           </div>
         </div>
-        <div class="hero-visual" id="hero-3d-scene" aria-label="A sculptural study of growth, with rising forms, glass and orbiting metal">
+        <div class="hero-visual" id="hero-3d-scene" aria-label="Interactive globe with map regions for all programme skills: ${skillNames}. Drag to rotate; click a skill to view details.">
           <div class="hero-visual-label">THE NEXT CHAPTER STARTS HERE</div>
           <div class="visual-placeholder">
             <span class="visual-orbit orbit-one"></span>
@@ -23,7 +26,7 @@ export function Hero() {
             <span class="visual-core" aria-hidden="true">S<span>+</span></span>
             <span class="visual-caption">LEARN · CREATE · GROW</span>
           </div>
-          <span class="hero-drag-hint" aria-hidden="true">DRAG TO ROTATE</span>
+          <span class="hero-drag-hint" aria-hidden="true">DRAG TO ROTATE · TAP A SKILL</span>
           <span class="hero-index">01 / 08</span>
         </div>
       </div>

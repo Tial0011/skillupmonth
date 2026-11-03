@@ -26,11 +26,9 @@
   .hero-kicker { margin-top: 35px; }
   .hero h1 { font-size: clamp(72px, 17.6vw, 128px); }
   .hero-visual { min-height: clamp(290px, 73vw, 390px); margin-top: 6px; }
-  .hero-visual::before { width: min(72vw, 360px); }
+  .hero-visual::before { width: min(62vw, 290px); }
   .visual-placeholder { width: min(66vw, 320px); }
   .hero-visual-label { top: 0; right: 3%; }
-  #hero-3d-scene canvas { pointer-events: auto; touch-action: none; cursor: grab; }
-  #hero-3d-scene canvas.is-dragging { cursor: grabbing; }
   .hero-drag-hint { position: absolute; bottom: 0; left: 3%; display: block; color: var(--color-muted); font-size: 8px; font-weight: 700; letter-spacing: .16em; }
   .hero-index { bottom: 0; right: 3%; }
   .scroll-cue { bottom: 22px; }

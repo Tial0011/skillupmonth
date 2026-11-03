@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { skills } from "../data/skills.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -14,6 +15,142 @@ function addMesh(parent, geometry, material, position, rotation = [0, 0, 0]) {
   mesh.rotation.set(...rotation);
   parent.add(mesh);
   return mesh;
+}
+
+function createSkillBadge(parent, kind, position, materials, mobileQuality) {
+  const badge = new THREE.Group();
+  badge.position.set(...position);
+  badge.userData.floatOffset = position[0] * 1.8 + position[1];
+  parent.add(badge);
+
+  const shell = addMesh(
+    badge,
+    new THREE.SphereGeometry(0.28, mobileQuality ? 12 : 20, mobileQuality ? 8 : 14),
+    materials.silver,
+    [0, 0, 0]
+  );
+  shell.scale.set(1, 0.84, 0.42);
+  addMesh(
+    badge,
+    new THREE.TorusGeometry(0.27, 0.012, 6, mobileQuality ? 32 : 56),
+    materials.blue,
+    [0, 0, 0.035]
+  );
+
+  const mark = materials.white;
+  const addBar = (x, y, width, height, rotation = 0) => {
+    const bar = addMesh(
+      badge,
+      new RoundedBoxGeometry(width, height, 0.035, 2, 0.012),
+      mark,
+      [x, y, 0.12],
+      [0, 0, rotation]
+    );
+    return bar;
+  };
+
+  if (kind === "creative") {
+    const dotGeometry = new THREE.SphereGeometry(0.035, mobileQuality ? 6 : 10, mobileQuality ? 5 : 8);
+    [[-0.09, 0.06], [0, 0.1], [0.09, 0.06], [-0.07, -0.04], [0.07, -0.04]].forEach(([x, y], index) => {
+      addMesh(badge, dotGeometry, index % 2 ? materials.white : materials.blue, [x, y, 0.13]);
+    });
+  } else if (kind === "digital") {
+    addBar(-0.09, 0, 0.15, 0.025, Math.PI / 4);
+    addBar(-0.09, 0, 0.15, 0.025, -Math.PI / 4);
+    addBar(0.09, 0, 0.15, 0.025, Math.PI / 4);
+    addBar(0.09, 0, 0.15, 0.025, -Math.PI / 4);
+    addBar(0, 0, 0.21, 0.022, -0.45);
+  } else if (kind === "communication") {
+    addBar(0, 0.075, 0.22, 0.024);
+    addBar(0, -0.045, 0.22, 0.024);
+    addBar(-0.1, 0.015, 0.12, 0.024, Math.PI / 2);
+    addBar(0.1, 0.015, 0.12, 0.024, Math.PI / 2);
+    addBar(-0.055, -0.095, 0.09, 0.024, -Math.PI / 4);
+    [-0.06, 0, 0.06].forEach(x => {
+      addMesh(badge, new THREE.SphereGeometry(0.018, 6, 6), materials.blue, [x, 0.015, 0.145]);
+    });
+  } else {
+    addBar(0, 0, 0.19, 0.045);
+    addBar(0, 0, 0.19, 0.045, Math.PI / 2);
+  }
+
+  badge.name = `skill-${kind}-emblem`;
+  return badge;
+}
+
+function createSkillLabels(parent) {
+  const columns = 4;
+  const cellWidth = 256;
+  const cellHeight = 64;
+  const rows = Math.ceil(skills.length / columns);
+  const canvas = document.createElement("canvas");
+  canvas.width = columns * cellWidth;
+  canvas.height = rows * cellHeight;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Unable to create the hero skill label texture.");
+
+  const atlas = new THREE.CanvasTexture(canvas);
+  atlas.colorSpace = THREE.SRGBColorSpace;
+  const labelMaterial = new THREE.MeshBasicMaterial({
+    map: atlas,
+    transparent: true,
+    depthTest: true,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+  const labels = [];
+  skills.forEach((skill, index) => {
+    const column = index % columns;
+    const row = Math.floor(index / columns);
+    const centerX = column * cellWidth + cellWidth / 2;
+    const centerY = row * cellHeight + cellHeight / 2;
+    context.font = "600 21px Arial, sans-serif";
+    let fontSize = 21;
+    while (context.measureText(skill.name).width > cellWidth - 28 && fontSize > 12) {
+      fontSize -= 1;
+      context.font = `600 ${fontSize}px Arial, sans-serif`;
+    }
+
+    const pillWidth = Math.min(cellWidth - 16, context.measureText(skill.name).width + 32);
+    const pillX = centerX - pillWidth / 2;
+    context.fillStyle = "rgba(248, 250, 255, 0.9)";
+    context.strokeStyle = "rgba(125, 153, 205, 0.58)";
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.roundRect(pillX, row * cellHeight + 8, pillWidth, cellHeight - 16, 20);
+    context.fill();
+    context.stroke();
+    context.fillStyle = "#304363";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = `600 ${fontSize}px Arial, sans-serif`;
+    context.fillText(skill.name, centerX, centerY, cellWidth - 24);
+
+    const geometry = new THREE.PlaneGeometry(pillWidth / cellWidth * 0.82, 0.2);
+    const u0 = pillX / canvas.width;
+    const u1 = (pillX + pillWidth) / canvas.width;
+    const v1 = 1 - row / rows;
+    const v0 = 1 - (row + 1) / rows;
+    geometry.setAttribute("uv", new THREE.Float32BufferAttribute([
+      u0, v1, u1, v1, u0, v0, u1, v0
+    ], 2));
+    const angle = index * Math.PI * (3 - Math.sqrt(5));
+    const vertical = 1 - ((index + 0.5) / skills.length) * 2;
+    const horizontal = Math.sqrt(1 - vertical * vertical);
+    const normal = new THREE.Vector3(
+      Math.cos(angle) * horizontal,
+      vertical,
+      Math.sin(angle) * horizontal
+    );
+    const label = new THREE.Mesh(geometry, labelMaterial);
+    label.position.copy(normal).multiplyScalar(1.82);
+    label.userData.normal = normal;
+    label.name = `skill-label-${skill.id}`;
+    parent.add(label);
+    labels.push(label);
+  });
+
+  return { labels, atlas, labelMaterial };
 }
 
 function createSculpture(scene, mobileQuality) {
@@ -51,6 +188,33 @@ function createSculpture(scene, mobileQuality) {
     [0.28, 0.2, 0.1]
   );
   innerCore.name = "inner-light";
+
+  const emblemMaterials = { silver, blue: paleBlue, white: innerCore.material };
+  const badgePositions = [
+    { kind: "creative", position: [-1.27, 1.03, 0.12] },
+    { kind: "digital", position: [1.2, 0.92, 0.18] },
+    { kind: "communication", position: [-1.4, -0.52, 0.38] },
+    { kind: "care", position: [1.38, -0.48, 0.3] }
+  ];
+  const skillBadges = badgePositions.map(({ kind, position }) =>
+    createSkillBadge(root, kind, position, emblemMaterials, mobileQuality)
+  );
+  const { labels: skillLabels, atlas: skillLabelAtlas, labelMaterial: skillLabelMaterial } = createSkillLabels(root);
+  const connectionMaterial = new THREE.MeshBasicMaterial({ color: "#87aaf4", transparent: true, opacity: 0.52 });
+  const corePosition = new THREE.Vector3(-0.12, 0.28, 0.18);
+  badgePositions.forEach(({ position }, index) => {
+    const end = new THREE.Vector3(...position).lerp(corePosition, 0.25);
+    const start = corePosition.clone().lerp(end, 0.48);
+    const control = start.clone().lerp(end, 0.5);
+    control.z += index % 2 ? -0.2 : 0.2;
+    const path = new THREE.CatmullRomCurve3([start, control, end]);
+    addMesh(
+      root,
+      new THREE.TubeGeometry(path, mobileQuality ? 12 : 20, 0.008, 4, false),
+      connectionMaterial,
+      [0, 0, 0]
+    );
+  });
 
   const rings = [];
   [
@@ -101,19 +265,6 @@ function createSculpture(scene, mobileQuality) {
     block.name = `growth-step-${index + 1}`;
   });
 
-  const satellites = [];
-  const satelliteGeometry = new THREE.OctahedronGeometry(0.11, 0);
-  [
-    [-1.55, 0.92, 0.22],
-    [1.45, -0.64, 0.48],
-    [1.58, 0.44, -0.2],
-    [-1.35, -0.48, 0.5]
-  ].forEach((position, index) => {
-    const object = addMesh(root, satelliteGeometry, index % 2 ? paleBlue : silver, position, [0.2 * index, 0.3, 0.1]);
-    object.userData.floatOffset = index * 1.7;
-    satellites.push(object);
-  });
-
   const particleCount = mobileQuality ? 38 : 220;
   const particlePositions = new Float32Array(particleCount * 3);
   let seed = 1931;
@@ -143,8 +294,177 @@ function createSculpture(scene, mobileQuality) {
   );
   plinth.name = "foundation-orbit";
 
-  const materials = [silver, paleBlue, darkSilver, accent, innerCore.material, ribbon.material, particles.material];
-  return { root, core, innerCore, rings, ribbon, steps, satellites, particles, plinth, materials, geometries: [satelliteGeometry] };
+  const materials = [silver, paleBlue, darkSilver, accent, innerCore.material, ribbon.material, particles.material, connectionMaterial, skillLabelMaterial];
+  return { root, core, innerCore, rings, ribbon, steps, skillBadges, skillLabels, skillLabelAtlas, particles, plinth, materials };
+}
+
+function createSkillGlobe(scene, mobileQuality) {
+  const root = new THREE.Group();
+  scene.add(root);
+  const globeRadius = 1.05;
+  const mapRadius = globeRadius + 0.05;
+  const colors = ["#315c9f", "#5476b1", "#7894bf", "#264f91", "#91a7ca", "#486da7", "#a0b4d2"];
+  const categoryGroups = [...new Set(skills.map(skill => skill.category))].map(category => ({
+    category,
+    entries: skills.filter(skill => skill.category === category)
+  }));
+  const columns = 4;
+  const cellWidth = 384;
+  const cellHeight = 96;
+  const rows = Math.ceil(skills.length / columns);
+  const canvas = document.createElement("canvas");
+  canvas.width = columns * cellWidth;
+  canvas.height = rows * cellHeight;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Unable to create the skill globe labels.");
+  const atlas = new THREE.CanvasTexture(canvas);
+  atlas.colorSpace = THREE.SRGBColorSpace;
+  const labelMaterial = new THREE.MeshBasicMaterial({
+    map: atlas,
+    transparent: true,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    side: THREE.DoubleSide
+  });
+  const regionMaterials = colors.map(color => new THREE.MeshBasicMaterial({
+    color,
+    side: THREE.DoubleSide
+  }));
+  const outlineMaterial = new THREE.LineBasicMaterial({ color: "#eef4ff", transparent: true, opacity: 0.78 });
+  const labels = [];
+
+  skills.forEach((skill, index) => {
+    const column = index % columns;
+    const row = Math.floor(index / columns);
+    const categoryIndex = categoryGroups.findIndex(group => group.category === skill.category);
+    const vertical = 1 - ((index + 0.5) / skills.length) * 2;
+    const angle = index * Math.PI * (3 - Math.sqrt(5));
+    const horizontal = Math.sqrt(1 - vertical * vertical);
+    const center = new THREE.Vector3(
+      Math.cos(angle) * horizontal,
+      vertical,
+      Math.sin(angle) * horizontal
+    );
+    const tangentX = new THREE.Vector3().crossVectors(center, new THREE.Vector3(0, 1, 0)).normalize();
+    if (tangentX.lengthSq() < 0.01) tangentX.set(1, 0, 0);
+    const tangentY = new THREE.Vector3().crossVectors(center, tangentX).normalize();
+
+    const maxTextWidth = cellWidth - 36;
+    let fontSize = 34;
+    context.font = `600 ${fontSize}px Arial, sans-serif`;
+    while (context.measureText(skill.name).width > maxTextWidth && fontSize > 18) {
+      fontSize -= 1;
+      context.font = `600 ${fontSize}px Arial, sans-serif`;
+    }
+    const pillWidth = Math.min(maxTextWidth, context.measureText(skill.name).width + 22);
+    const originX = column * cellWidth;
+    const originY = row * cellHeight;
+    const pillX = originX + (cellWidth - pillWidth) / 2;
+    context.fillStyle = "rgba(248, 250, 255, 0.96)";
+    context.strokeStyle = colors[categoryIndex % colors.length];
+    context.lineWidth = 3;
+    context.beginPath();
+    context.roundRect(pillX, originY + 8, pillWidth, 80, 24);
+    context.fill();
+    context.stroke();
+    context.fillStyle = "#263a5c";
+    context.font = `600 ${fontSize}px Arial, sans-serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(skill.name, originX + cellWidth / 2, originY + cellHeight / 2, maxTextWidth);
+
+    const vertices = [center.clone().multiplyScalar(mapRadius)];
+    for (let edge = 0; edge < 6; edge += 1) {
+      const angle = edge * Math.PI / 3;
+      vertices.push(center.clone()
+        .addScaledVector(tangentX, Math.cos(angle) * 0.25)
+        .addScaledVector(tangentY, Math.sin(angle) * 0.25)
+        .normalize()
+        .multiplyScalar(mapRadius));
+    }
+    const patchGeometry = new THREE.BufferGeometry();
+    patchGeometry.setAttribute("position", new THREE.Float32BufferAttribute(
+      vertices.flatMap(vertex => vertex.toArray()), 3
+    ));
+    patchGeometry.setIndex([0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 5, 0, 5, 6, 0, 6, 1]);
+    patchGeometry.computeVertexNormals();
+    const patch = new THREE.Mesh(patchGeometry, regionMaterials[categoryIndex % regionMaterials.length]);
+    patch.name = `skill-map-${skill.id}`;
+    root.add(patch);
+
+    const boundary = vertices.slice(1).map(vertex => vertex.clone().multiplyScalar((mapRadius + 0.002) / mapRadius));
+    boundary.push(boundary[0]);
+    root.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(boundary),
+      outlineMaterial
+    ));
+
+    const labelWidth = Math.max(0.56, pillWidth / cellWidth * 1.32);
+    const labelGeometry = new THREE.PlaneGeometry(labelWidth, 0.38);
+    const u0 = pillX / canvas.width;
+    const u1 = (pillX + pillWidth) / canvas.width;
+    const v1 = 1 - row / rows;
+    const v0 = 1 - (row + 1) / rows;
+    labelGeometry.setAttribute("uv", new THREE.Float32BufferAttribute([
+      u0, v1, u1, v1, u0, v0, u1, v0
+    ], 2));
+    const label = new THREE.Mesh(labelGeometry, labelMaterial);
+    label.position.copy(center).multiplyScalar(globeRadius + 0.08);
+    label.userData.normal = center;
+    const up = new THREE.Vector3(0, 1, 0).addScaledVector(center, -center.y).normalize();
+    if (up.lengthSq() < 0.01) up.set(0, 0, 1);
+    const right = new THREE.Vector3().crossVectors(up, center).normalize();
+    up.crossVectors(center, right).normalize();
+    label.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(right, up, center));
+    label.name = `skill-label-${skill.id}`;
+    root.add(label);
+    labels.push(label);
+  });
+
+  const globe = new THREE.Mesh(
+    new THREE.SphereGeometry(globeRadius, mobileQuality ? 24 : 36, mobileQuality ? 18 : 28),
+    new THREE.MeshPhysicalMaterial({ color: "#d2def0", roughness: 0.5, metalness: 0.08, clearcoat: 0.3 })
+  );
+  globe.name = "skills-globe";
+  globe.renderOrder = -1;
+  root.add(globe);
+  const grid = new THREE.Mesh(
+    new THREE.SphereGeometry(globeRadius + 0.004, mobileQuality ? 14 : 22, mobileQuality ? 10 : 16),
+    new THREE.MeshBasicMaterial({ color: "#8197b8", wireframe: true, transparent: true, opacity: 0.08 })
+  );
+  root.add(grid);
+  const orbitMaterial = makeMetal("#c4d1e6", 0.35, 0.48);
+  const orbit = addMesh(root, new THREE.TorusGeometry(1.19, 0.008, 5, mobileQuality ? 48 : 80), orbitMaterial, [0, 0, 0], [1.15, 0.18, -0.24]);
+  const particles = new THREE.Points(
+    new THREE.BufferGeometry(),
+    new THREE.PointsMaterial({ color: "#6f91d5", size: 0.016, sizeAttenuation: true, transparent: true, opacity: 0.34 })
+  );
+  const positions = new Float32Array((mobileQuality ? 16 : 36) * 3);
+  for (let index = 0; index < positions.length; index += 3) {
+    const direction = new THREE.Vector3(Math.sin(index * 12.9898), Math.cos(index * 4.1414), Math.sin(index * 7.233)).normalize();
+    positions.set(direction.multiplyScalar(1.42 + (index % 5) * 0.08).toArray(), index);
+  }
+  particles.geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  root.add(particles);
+
+  return {
+    root,
+    globe,
+    orbit,
+    particles,
+    labels,
+    atlas,
+    materials: [
+      ...regionMaterials,
+      outlineMaterial,
+      labelMaterial,
+      globe.material,
+      grid.material,
+      orbitMaterial,
+      particles.material
+    ]
+  };
 }
 
 export function initHeroScene(container) {
@@ -177,6 +497,11 @@ export function initHeroScene(container) {
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2("#edf2fb", 0.055);
   let baseCameraZ = 8.1;
+  const raycaster = new THREE.Raycaster();
+  const rayPointer = new THREE.Vector2();
+  let dragOriginX = 0;
+  let dragOriginY = 0;
+  let dragMoved = false;
 
   try {
     renderer = new THREE.WebGLRenderer({
@@ -218,7 +543,9 @@ export function initHeroScene(container) {
     rimLight.position.set(-2.2, -1.3, -1.4);
     scene.add(rimLight);
 
-    const sculpture = createSculpture(scene, mobileQuality);
+    const sculpture = createSkillGlobe(scene, mobileQuality);
+    const rootInverse = new THREE.Quaternion();
+    const viewDirection = new THREE.Vector3();
     const resize = () => {
       if (isDisposed) return;
       const { width, height } = container.getBoundingClientRect();
@@ -226,7 +553,7 @@ export function initHeroScene(container) {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 0.85 : mobileQuality ? 1 : 1.55));
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
-      baseCameraZ = width < 500 ? 7.4 : width < 760 ? 8.3 : 8.1;
+      baseCameraZ = width < 500 ? 5.4 : width < 760 ? 6.1 : 6.2;
       camera.position.z = baseCameraZ;
       camera.updateProjectionMatrix();
     };
@@ -253,43 +580,23 @@ export function initHeroScene(container) {
       const mobileScrollTurn = mobileQuality ? storyProgress * 0.9 : 0;
       sculpture.root.rotation.y = easedPointer.x * 0.18 + Math.sin(elapsed * 0.12) * 0.045 + mobileScrollTurn + manualRotation.x;
       sculpture.root.rotation.x = easedPointer.y * 0.1 + Math.sin(elapsed * 0.18) * 0.025 + storyProgress * (mobileQuality ? 0.2 : 0) + manualRotation.y;
-      sculpture.root.position.x = easedPointer.x * 0.13 + (mobileQuality ? Math.sin(storyProgress * Math.PI) * 0.12 : 0);
-      sculpture.root.position.y = Math.sin(elapsed * 0.32) * 0.045 - storyProgress * (mobileQuality ? 0.3 : 0.18);
-      sculpture.root.scale.setScalar(1 - storyProgress * (mobileQuality ? 0.07 : 0.055));
-      if (mobileQuality) {
-        sculpture.core.rotation.y = sculpture.core.userData.baseY + storyProgress * 0.72;
-        sculpture.core.rotation.x = sculpture.core.userData.baseX + storyProgress * 0.2;
-      } else {
-        sculpture.core.rotation.y += delta * (0.18 + storyProgress * 0.12);
-        sculpture.core.rotation.x += delta * 0.11;
-      }
-      sculpture.innerCore.rotation.y -= delta * (mobileQuality ? 0 : 0.22);
-      if (mobileQuality) sculpture.innerCore.rotation.z = storyProgress * 0.18;
-      sculpture.rings.forEach((ring, index) => {
-        const rotationSpeed = mobileQuality ? 0 : (0.018 + index * 0.009) * ring.userData.spin;
-        ring.rotation.z += delta * rotationSpeed;
-        ring.rotation.x += delta * (mobileQuality ? 0 : 0.007 * (index + 1));
-        if (mobileQuality) {
-          ring.rotation.z = ring.userData.baseZ + storyProgress * (0.44 + index * 0.08) * ring.userData.spin;
-          ring.rotation.x = ring.userData.baseX + storyProgress * 0.18 * ring.userData.spin;
-        }
-      });
-      sculpture.ribbon.rotation.y = (mobileQuality ? 0 : Math.sin(elapsed * 0.25) * 0.06) + storyProgress * (mobileQuality ? 0.3 : 0.1);
-      sculpture.satellites.forEach((object, index) => {
-        object.position.y += (Math.sin(elapsed * 0.8 + object.userData.floatOffset) * 0.035 - (object.userData.lastFloat || 0));
-        object.userData.lastFloat = Math.sin(elapsed * 0.8 + object.userData.floatOffset) * 0.035;
-        object.rotation.x += delta * (mobileQuality ? 0 : 0.18 + index * 0.025);
-        object.rotation.y += delta * (mobileQuality ? 0 : 0.21);
-        if (mobileQuality) object.rotation.y = storyProgress * 0.55 + index * 0.3;
-      });
-      sculpture.particles.rotation.y = (mobileQuality ? 0 : elapsed * 0.012) + storyProgress * (mobileQuality ? 0.22 : 0);
-      blueLight.intensity = (mobileQuality ? 16 : 30) + Math.sin(elapsed * 0.6) * (mobileQuality ? 2 : 4) + storyProgress * (mobileQuality ? 5 : 12);
+      sculpture.root.position.x = easedPointer.x * 0.06;
+      sculpture.root.position.y = -storyProgress * 0.1;
+      sculpture.root.scale.setScalar(0.94 - storyProgress * 0.025);
+      sculpture.orbit.rotation.y = Math.sin(elapsed * 0.15) * 0.08 + storyProgress * 0.18;
+      sculpture.particles.rotation.y = mobileQuality ? 0 : elapsed * 0.01;
+      blueLight.intensity = (mobileQuality ? 12 : 22) + Math.sin(elapsed * 0.6) * (mobileQuality ? 1 : 3);
       camera.position.x += (easedPointer.x * (mobileQuality ? 0.1 : 0.2) - camera.position.x) * Math.min(delta * 1.8, 1);
       camera.position.y += (easedPointer.y * (mobileQuality ? -0.07 : -0.14) - storyProgress * (mobileQuality ? 0.28 : 0.08) - camera.position.y) * Math.min(delta * 1.8, 1);
       if (mobileQuality) {
         camera.position.z += (baseCameraZ - storyProgress * 0.5 - camera.position.z) * Math.min(delta * 2.4, 1);
       }
       camera.lookAt(0, 0, 0);
+      rootInverse.copy(sculpture.root.quaternion).invert();
+      viewDirection.copy(camera.position).sub(sculpture.root.position).normalize().applyQuaternion(rootInverse);
+      sculpture.labels.forEach(label => {
+        label.visible = label.userData.normal.dot(viewDirection) > 0.82;
+      });
       renderer.render(scene, camera);
       if (!container.classList.contains("webgl-ready")) container.classList.add("webgl-ready");
       const inertiaActive = rotationVelocity.lengthSq() >= 0.0004;
@@ -305,6 +612,7 @@ export function initHeroScene(container) {
     const onPointerMove = event => {
       const bounds = container.getBoundingClientRect();
       if (activePointerId === event.pointerId) {
+        if (Math.hypot(event.clientX - dragOriginX, event.clientY - dragOriginY) > 8) dragMoved = true;
         const now = event.timeStamp;
         const elapsed = Math.max((now - lastDragAt) / 1000, 1 / 120);
         const deltaX = (event.clientX - lastDragX) / bounds.width * Math.PI * 2;
@@ -329,6 +637,9 @@ export function initHeroScene(container) {
     const onPointerDown = event => {
       if (event.button !== 0 || !event.isPrimary) return;
       activePointerId = event.pointerId;
+      dragOriginX = event.clientX;
+      dragOriginY = event.clientY;
+      dragMoved = false;
       lastDragX = event.clientX;
       lastDragY = event.clientY;
       lastDragAt = event.timeStamp;
@@ -339,6 +650,17 @@ export function initHeroScene(container) {
     };
     const onPointerUp = event => {
       if (activePointerId !== event.pointerId) return;
+      if (event.type === "pointerup" && !dragMoved) {
+        const bounds = renderer.domElement.getBoundingClientRect();
+        rayPointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+        rayPointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+        raycaster.setFromCamera(rayPointer, camera);
+        const selectedLabel = raycaster.intersectObjects(sculpture.labels, false)[0]?.object;
+        const selectedSkill = selectedLabel && skills.find(skill => selectedLabel.name === `skill-label-${skill.id}`);
+        if (selectedSkill) {
+          container.dispatchEvent(new CustomEvent("skillselect", { detail: selectedSkill }));
+        }
+      }
       activePointerId = null;
       renderer.domElement.classList.remove("is-dragging");
       if (renderer.domElement.hasPointerCapture(event.pointerId)) {
@@ -423,11 +745,15 @@ export function initHeroScene(container) {
         renderer.domElement.removeEventListener("webglcontextlost", onContextLost);
         renderer.domElement.removeEventListener("webglcontextrestored", onContextRestored);
         reducedMotion.removeEventListener?.("change", requestRender);
+        const disposedGeometries = new Set();
         sculpture.root.traverse(object => {
-          if (object.geometry && !sculpture.geometries.includes(object.geometry)) object.geometry.dispose();
+          if (object.geometry && !disposedGeometries.has(object.geometry)) {
+            object.geometry.dispose();
+            disposedGeometries.add(object.geometry);
+          }
         });
-        sculpture.geometries.forEach(geometry => geometry.dispose());
         sculpture.materials.forEach(material => material.dispose());
+        sculpture.atlas.dispose();
         environmentTarget?.texture.dispose();
         renderer.dispose();
         renderer.domElement.remove();

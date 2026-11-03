@@ -77,11 +77,11 @@
 .skill-dialog {
   position: fixed;
   inset: 0;
-  width: min(440px, calc(100% - 32px));
+  width: min(380px, calc(100% - 32px));
   max-width: none;
   max-height: min(620px, calc(100% - 32px));
   margin: auto;
-  padding: clamp(26px, 6vw, 42px);
+  padding: clamp(22px, 5vw, 34px);
   overflow: auto;
   border: 1px solid rgba(255,255,255,.92);
   background:

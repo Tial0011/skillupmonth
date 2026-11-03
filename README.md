@@ -1,6 +1,6 @@
 # UMSA Skill-Up Month
 
-A responsive, immersive single-page Vanilla JavaScript website for UMSA Skill-Up Month 2026. The experience combines an original procedural Three.js hero sculpture with GSAP and ScrollTrigger motion while preserving the original modular component and editable data architecture.
+A responsive, immersive single-page Vanilla JavaScript website for UMSA Skill-Up Month 2026. The experience combines an original, touch-rotatable Three.js skills globe with GSAP and ScrollTrigger motion while preserving the original modular component and editable data architecture.
 
 ## Technology
 
@@ -61,7 +61,7 @@ Netlify installs the dependencies from `package-lock.json` before running the bu
 
 ## 6. Updating skills
 
-Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. Clicking a skill opens its group-information dialog. When a group's WhatsApp invite is ready, add its URL as `whatsappUrl` on that skill entry; until then the dialog clearly says the link is coming soon. The skills component and category-accent styling use these entries; preserve unique IDs for stable in-page anchors.
+Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. Skills appear as regions on the hero globe; clicking a visible globe label or a skill card opens its detail dialog. When a group's WhatsApp invite is ready, add its URL as `whatsappUrl` on that skill entry; until then the dialog clearly says the link is coming soon. The skills component and globe use these entries; preserve unique IDs for stable in-page anchors.
 
 ## 7. Editing the programme
 
@@ -88,7 +88,7 @@ The supplied Instagram, Snapchat, TikTok, YouTube and X profiles are configured 
 - `src/styles/` — design tokens and modular section styles
 - `public/` — static assets
 
-The hero scene mounts at `#hero-3d-scene`. It uses generated geometry, capped pixel ratio, visibility-aware rendering, context-loss fallback, and disposal on page exit. On mobile and lower-core devices it keeps the interactive 3D sculpture while reducing resolution, frame rate, geometry detail, particle count, environment-map generation, and material cost.
+The hero scene mounts at `#hero-3d-scene`. It uses generated geometry, capped pixel ratio, visibility-aware rendering, context-loss fallback, and disposal on page exit. Visitors can drag the globe to rotate it and select a visible skill label to open its details. On mobile and lower-core devices it keeps the interactive 3D globe while reducing resolution and frame rate.
 
 The Three.js runtime is split into its own asynchronous production chunk. It is approximately 137 kB gzipped and is loaded with the hero experience.
 

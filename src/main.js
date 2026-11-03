@@ -70,21 +70,34 @@ const skillDialogMessage = document.querySelector("#skill-dialog-message");
 const skillDialogJoin = document.querySelector("#skill-dialog-join");
 const skillDialogPending = document.querySelector("#skill-dialog-pending");
 
+const openSkillDialog = ({ category, name, visual, whatsappUrl }) => {
+  skillDialogCategory.textContent = category;
+  skillDialogTitle.textContent = name;
+  skillDialogDescription.textContent = visual;
+  skillDialogJoin.hidden = !whatsappUrl;
+  if (whatsappUrl) skillDialogJoin.href = whatsappUrl;
+  else skillDialogJoin.removeAttribute("href");
+  skillDialogPending.hidden = Boolean(whatsappUrl);
+  skillDialogMessage.textContent = whatsappUrl
+    ? "Join the WhatsApp group to connect with others learning this skill."
+    : "The WhatsApp group for this skill is being prepared. Please check back soon.";
+  skillDialog.showModal();
+};
+
 document.querySelector("#skills-grid")?.addEventListener("click", event => {
   const skillButton = event.target.closest(".skill-item");
   if (!skillButton) return;
 
-  skillDialogCategory.textContent = skillButton.dataset.skillCategory;
-  skillDialogTitle.textContent = skillButton.dataset.skillName;
-  skillDialogDescription.textContent = skillButton.dataset.skillDescription;
-  skillDialogJoin.hidden = !skillButton.dataset.whatsappUrl;
-  if (skillButton.dataset.whatsappUrl) skillDialogJoin.href = skillButton.dataset.whatsappUrl;
-  else skillDialogJoin.removeAttribute("href");
-  skillDialogPending.hidden = Boolean(skillButton.dataset.whatsappUrl);
-  skillDialogMessage.textContent = skillButton.dataset.whatsappUrl
-    ? "Join the WhatsApp group to connect with others learning this skill."
-    : "The WhatsApp group for this skill is being prepared. Please check back soon.";
-  skillDialog.showModal();
+  openSkillDialog({
+    category: skillButton.dataset.skillCategory,
+    name: skillButton.dataset.skillName,
+    visual: skillButton.dataset.skillDescription,
+    whatsappUrl: skillButton.dataset.whatsappUrl
+  });
+});
+
+document.querySelector("#hero-3d-scene")?.addEventListener("skillselect", event => {
+  openSkillDialog(event.detail);
 });
 
 skillDialog?.addEventListener("click", event => {
