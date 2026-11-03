@@ -16,27 +16,29 @@ function addMesh(parent, geometry, material, position, rotation = [0, 0, 0]) {
   return mesh;
 }
 
-function createSculpture(scene) {
+function createSculpture(scene, mobileQuality) {
   const root = new THREE.Group();
   scene.add(root);
 
   const silver = makeMetal("#dce4ef", 0.2, 0.86);
   const paleBlue = makeMetal("#8daff4", 0.2, 0.72);
   const darkSilver = makeMetal("#8392aa", 0.28, 0.78);
-  const accent = new THREE.MeshPhysicalMaterial({
-    color: "#b9d0ff",
-    metalness: 0.08,
-    roughness: 0.08,
-    transmission: 0.88,
-    thickness: 1.25,
-    ior: 1.28,
-    clearcoat: 1,
-    clearcoatRoughness: 0.08,
-    attenuationColor: new THREE.Color("#7398ed"),
-    attenuationDistance: 2.4
-  });
+  const accent = mobileQuality
+    ? new THREE.MeshStandardMaterial({ color: "#b9d0ff", metalness: 0.12, roughness: 0.24, transparent: true, opacity: 0.78 })
+    : new THREE.MeshPhysicalMaterial({
+      color: "#b9d0ff",
+      metalness: 0.08,
+      roughness: 0.08,
+      transmission: 0.88,
+      thickness: 1.25,
+      ior: 1.28,
+      clearcoat: 1,
+      clearcoatRoughness: 0.08,
+      attenuationColor: new THREE.Color("#7398ed"),
+      attenuationDistance: 2.4
+    });
 
-  const core = addMesh(root, new THREE.IcosahedronGeometry(0.68, 2), accent, [-0.12, 0.28, 0.18], [0.2, 0.1, -0.14]);
+  const core = addMesh(root, new THREE.IcosahedronGeometry(0.68, mobileQuality ? 1 : 2), accent, [-0.12, 0.28, 0.18], [0.2, 0.1, -0.14]);
   core.name = "transformation-crystal";
 
   const innerCore = addMesh(
@@ -54,7 +56,7 @@ function createSculpture(scene) {
     { radius: 1.45, tube: 0.014, rotation: [0.08, 1.02, 0.52], material: paleBlue },
     { radius: 0.91, tube: 0.012, rotation: [1.32, -0.12, 0.75], material: darkSilver }
   ].forEach(({ radius, tube, rotation, material }, index) => {
-    const ring = addMesh(root, new THREE.TorusGeometry(radius, tube, 12, 128), material, [-0.12, 0.28, 0], rotation);
+    const ring = addMesh(root, new THREE.TorusGeometry(radius, tube, 8, mobileQuality ? 64 : 128), material, [-0.12, 0.28, 0], rotation);
     ring.userData.spin = index % 2 ? -1 : 1;
     rings.push(ring);
   });
@@ -72,8 +74,10 @@ function createSculpture(scene) {
   const ribbonCurve = new THREE.CatmullRomCurve3(ribbonPoints);
   const ribbon = addMesh(
     root,
-    new THREE.TubeGeometry(ribbonCurve, 180, 0.046, 10, false),
-    new THREE.MeshPhysicalMaterial({ color: "#a9c5ff", metalness: 0.62, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.16 }),
+    new THREE.TubeGeometry(ribbonCurve, mobileQuality ? 84 : 180, 0.046, mobileQuality ? 6 : 10, false),
+    mobileQuality
+      ? new THREE.MeshStandardMaterial({ color: "#a9c5ff", metalness: 0.5, roughness: 0.28 })
+      : new THREE.MeshPhysicalMaterial({ color: "#a9c5ff", metalness: 0.62, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.16 }),
     [0, 0, 0]
   );
   ribbon.name = "ascending-ribbon";
@@ -106,7 +110,7 @@ function createSculpture(scene) {
     satellites.push(object);
   });
 
-  const particleCount = window.innerWidth < 760 ? 100 : 220;
+  const particleCount = mobileQuality ? 38 : 220;
   const particlePositions = new Float32Array(particleCount * 3);
   let seed = 1931;
   const random = () => {
@@ -128,7 +132,7 @@ function createSculpture(scene) {
 
   const plinth = addMesh(
     root,
-    new THREE.TorusGeometry(1.62, 0.012, 8, 160),
+    new THREE.TorusGeometry(1.62, 0.012, 6, mobileQuality ? 72 : 160),
     silver,
     [-0.05, -1.13, -0.3],
     [Math.PI / 2.18, 0, 0]
@@ -158,6 +162,8 @@ export function initHeroScene(container) {
   let previousFrameAt = null;
   let previousRenderAt = 0;
   const mediaQuery = window.matchMedia("(max-width: 760px)");
+  const mobileQuality = mediaQuery.matches || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
+  const frameInterval = mobileQuality ? 1000 / 24 : 1000 / 30;
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2("#edf2fb", 0.055);
 
@@ -168,7 +174,7 @@ export function initHeroScene(container) {
       powerPreference: "high-performance",
       precision: "mediump"
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 1 : 1.55));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 0.85 : mobileQuality ? 1 : 1.55));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
@@ -181,33 +187,35 @@ export function initHeroScene(container) {
     camera.position.set(0, 0.06, 8.1);
     camera.lookAt(0, 0, 0);
 
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    environment = new RoomEnvironment();
-    environmentTarget = pmrem.fromScene(environment, 0.04);
-    scene.environment = environmentTarget.texture;
-    environment.dispose();
-    pmrem.dispose();
+    if (!mobileQuality) {
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      environment = new RoomEnvironment();
+      environmentTarget = pmrem.fromScene(environment, 0.04);
+      scene.environment = environmentTarget.texture;
+      environment.dispose();
+      pmrem.dispose();
+    }
 
-    scene.add(new THREE.HemisphereLight("#ffffff", "#9aa9c3", 2.1));
+    scene.add(new THREE.HemisphereLight("#ffffff", "#9aa9c3", mobileQuality ? 1.7 : 2.1));
     const keyLight = new THREE.DirectionalLight("#ffffff", 3.1);
     keyLight.position.set(-3.2, 4.4, 5);
     scene.add(keyLight);
-    const blueLight = new THREE.PointLight("#76a1ff", 34, 9, 1.8);
+    const blueLight = new THREE.PointLight("#76a1ff", mobileQuality ? 18 : 34, 9, 1.8);
     blueLight.position.set(2.4, 1.5, 2.2);
     scene.add(blueLight);
-    const rimLight = new THREE.PointLight("#ffffff", 20, 7, 2);
+    const rimLight = new THREE.PointLight("#ffffff", mobileQuality ? 10 : 20, 7, 2);
     rimLight.position.set(-2.2, -1.3, -1.4);
     scene.add(rimLight);
 
-    const sculpture = createSculpture(scene);
+    const sculpture = createSculpture(scene, mobileQuality);
     const resize = () => {
       if (isDisposed) return;
       const { width, height } = container.getBoundingClientRect();
       if (!width || !height) return;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 1 : 1.55));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 0.85 : mobileQuality ? 1 : 1.55));
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
-      camera.position.z = width < 500 ? 8.7 : width < 760 ? 8.3 : 8.1;
+      camera.position.z = width < 500 ? 7.4 : width < 760 ? 8.3 : 8.1;
       camera.updateProjectionMatrix();
     };
 
@@ -215,7 +223,7 @@ export function initHeroScene(container) {
       frameId = 0;
       if (isDisposed || contextLost || !isVisible) return;
       const currentTime = performance.now() / 1000;
-      if (currentTime * 1000 - previousRenderAt < 1000 / 30) {
+      if (currentTime * 1000 - previousRenderAt < frameInterval) {
         frameId = window.requestAnimationFrame(renderFrame);
         return;
       }
@@ -245,9 +253,9 @@ export function initHeroScene(container) {
         object.rotation.y += delta * 0.21;
       });
       sculpture.particles.rotation.y = elapsed * 0.012;
-      blueLight.intensity = 30 + Math.sin(elapsed * 0.6) * 4 + storyProgress * 12;
-      camera.position.x += (easedPointer.x * 0.2 - camera.position.x) * Math.min(delta * 1.8, 1);
-      camera.position.y += (easedPointer.y * -0.14 - storyProgress * 0.08 - camera.position.y) * Math.min(delta * 1.8, 1);
+      blueLight.intensity = (mobileQuality ? 16 : 30) + Math.sin(elapsed * 0.6) * (mobileQuality ? 2 : 4) + storyProgress * (mobileQuality ? 5 : 12);
+      camera.position.x += (easedPointer.x * (mobileQuality ? 0.1 : 0.2) - camera.position.x) * Math.min(delta * 1.8, 1);
+      camera.position.y += (easedPointer.y * (mobileQuality ? -0.07 : -0.14) - storyProgress * 0.08 - camera.position.y) * Math.min(delta * 1.8, 1);
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
       if (!container.classList.contains("webgl-ready")) container.classList.add("webgl-ready");
@@ -293,14 +301,6 @@ export function initHeroScene(container) {
       requestRender();
     };
     const onViewportChange = event => {
-      if (event.matches) {
-        if (frameId) window.cancelAnimationFrame(frameId);
-        frameId = 0;
-        renderer.domElement.style.display = "none";
-        container.classList.remove("webgl-ready");
-        return;
-      }
-      renderer.domElement.style.display = "";
       resize();
       requestRender();
     };

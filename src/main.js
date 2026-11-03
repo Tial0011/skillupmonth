@@ -94,15 +94,12 @@ let disposeMotion = () => {};
 let experienceCancelled = false;
 
 const loadExperience = async () => {
-  const sceneModule = window.matchMedia("(max-width: 760px)").matches
-    ? Promise.resolve(null)
-    : import("./experience/heroScene.js");
   const [motionModule, resolvedSceneModule] = await Promise.all([
     import("./experience/motion.js"),
-    sceneModule
+    import("./experience/heroScene.js")
   ]);
   if (experienceCancelled) return;
-  if (resolvedSceneModule && !window.matchMedia("(max-width: 760px)").matches) {
+  if (resolvedSceneModule) {
     heroScene = resolvedSceneModule.initHeroScene(document.querySelector("#hero-3d-scene"));
   }
   disposeMotion = motionModule.initMotion(heroScene);

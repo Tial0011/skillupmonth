@@ -69,7 +69,7 @@ Edit `src/data/programme.js`. Keep each session in its correct weekend/day and p
 
 ## 8. Adding sponsor logos
 
-Place approved logo assets in `public/logos/`, then update `src/data/sponsors.js` with the sponsor `name`, relative public path (for example `/logos/example.svg`) and optional `tier`. Logos render with `object-fit: contain` to preserve their original proportions. Replace the sample entries only with confirmed partner details.
+There are no confirmed sponsors yet, so the partner gallery displays an announcement placeholder rather than invented sponsor marks. When sponsors are confirmed, place approved logo assets in `public/logos/`, then add entries to `src/data/sponsors.js` with the sponsor `name`, relative public path (for example `/logos/example.svg`) and optional `tier`. Logos render with `object-fit: contain` to preserve their original proportions.
 
 ## 9. Updating registration links
 
@@ -77,7 +77,7 @@ Set `registrationUrl` in `src/config/siteConfig.js` to the official registration
 
 ## 10. Updating social links
 
-Set the official URLs in `socialLinks` in `src/config/siteConfig.js`. The footer displays links that have a URL; empty values remain hidden. `contactEmail` is available for approved contact information.
+The supplied Instagram, Snapchat, TikTok, YouTube and X profiles are configured in `socialLinks` in `src/config/siteConfig.js`. Update those values if the official accounts change; the footer displays a linked icon for each populated profile. The supplied UMSA, UNIMED and TLA logos are in `public/logos/` and appear together in the footer community strip. `contactEmail` is available for approved contact information.
 
 ## Project structure
 
@@ -88,9 +88,9 @@ Set the official URLs in `socialLinks` in `src/config/siteConfig.js`. The footer
 - `src/styles/` — design tokens and modular section styles
 - `public/` — static assets
 
-The hero scene mounts at `#hero-3d-scene`. It uses generated geometry, capped pixel ratio, visibility-aware rendering, a CSS-only mobile alternative, context-loss fallback, and disposal on page exit.
+The hero scene mounts at `#hero-3d-scene`. It uses generated geometry, capped pixel ratio, visibility-aware rendering, context-loss fallback, and disposal on page exit. On mobile and lower-core devices it keeps the interactive 3D sculpture while reducing resolution, frame rate, geometry detail, particle count, environment-map generation, and material cost.
 
-The Three.js runtime is split into its own asynchronous production chunk and is only requested on wider screens. The core library is approximately 137 kB gzipped; `chunkSizeWarningLimit` is set just above its minified size so Vite does not flag this intentionally lazy-loaded vendor chunk.
+The Three.js runtime is split into its own asynchronous production chunk. It is approximately 137 kB gzipped and is loaded with the hero experience.
 
 ## Source accuracy
 

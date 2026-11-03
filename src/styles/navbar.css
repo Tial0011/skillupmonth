@@ -8,6 +8,7 @@
 }
 .nav-shell { min-height: 82px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
 .brand { display: inline-flex; align-items: center; gap: 11px; flex-shrink: 0; }
+.brand-mark-image { display: block; width: 48px; height: 48px; flex: 0 0 auto; border-radius: 50%; background: #fff; object-fit: contain; }
 .brand-mark {
   display: grid;
   place-items: center;

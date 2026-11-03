@@ -1,12 +1,9 @@
-import { siteConfig } from "../config/siteConfig.js";
-import { escapeHTML } from "../utils/helpers.js";
-
 export function Navbar() {
   return `
     <header class="site-header" id="top">
       <nav class="nav-shell container" aria-label="Main navigation">
         <a class="brand" href="#home" aria-label="UMSA Skill-Up Month home">
-          <span class="brand-mark">U</span>
+          <img class="brand-mark-image" src="/logos/umsa.png" alt="UMSA crest">
           <span class="brand-copy"><strong>UMSA</strong><small>SKILL-UP MONTH</small></span>
         </a>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-menu">
