@@ -23,6 +23,7 @@ export function Hero() {
             <span class="visual-core" aria-hidden="true">S<span>+</span></span>
             <span class="visual-caption">LEARN · CREATE · GROW</span>
           </div>
+          <span class="hero-drag-hint" aria-hidden="true">DRAG TO ROTATE</span>
           <span class="hero-index">01 / 08</span>
         </div>
       </div>

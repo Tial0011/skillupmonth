@@ -29,6 +29,9 @@
   .hero-visual::before { width: min(72vw, 360px); }
   .visual-placeholder { width: min(66vw, 320px); }
   .hero-visual-label { top: 0; right: 3%; }
+  #hero-3d-scene canvas { pointer-events: auto; touch-action: none; cursor: grab; }
+  #hero-3d-scene canvas.is-dragging { cursor: grabbing; }
+  .hero-drag-hint { position: absolute; bottom: 0; left: 3%; display: block; color: var(--color-muted); font-size: 8px; font-weight: 700; letter-spacing: .16em; }
   .hero-index { bottom: 0; right: 3%; }
   .scroll-cue { bottom: 22px; }
   .about-content::before { top: -30px; right: 0; width: 26vw; }

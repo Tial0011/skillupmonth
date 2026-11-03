@@ -162,6 +162,12 @@ export function initHeroScene(container) {
   let intersectionObserver;
   const pointer = new THREE.Vector2();
   const easedPointer = new THREE.Vector2();
+  const manualRotation = new THREE.Vector2();
+  const rotationVelocity = new THREE.Vector2();
+  let activePointerId = null;
+  let lastDragX = 0;
+  let lastDragY = 0;
+  let lastDragAt = 0;
   const startedAt = performance.now() / 1000;
   let previousFrameAt = null;
   let previousRenderAt = 0;
@@ -238,10 +244,15 @@ export function initHeroScene(container) {
       const elapsed = currentTime - startedAt;
       previousFrameAt = currentTime;
       easedPointer.lerp(pointer, 1 - Math.exp(-delta * 3.2));
+      if (activePointerId === null && rotationVelocity.lengthSq() > 0) {
+        manualRotation.addScaledVector(rotationVelocity, delta);
+        rotationVelocity.multiplyScalar(Math.exp(-4.5 * delta));
+        if (rotationVelocity.lengthSq() < 0.0004) rotationVelocity.set(0, 0);
+      }
 
       const mobileScrollTurn = mobileQuality ? storyProgress * 0.9 : 0;
-      sculpture.root.rotation.y = easedPointer.x * 0.18 + Math.sin(elapsed * 0.12) * 0.045 + mobileScrollTurn;
-      sculpture.root.rotation.x = easedPointer.y * 0.1 + Math.sin(elapsed * 0.18) * 0.025 + storyProgress * (mobileQuality ? 0.2 : 0);
+      sculpture.root.rotation.y = easedPointer.x * 0.18 + Math.sin(elapsed * 0.12) * 0.045 + mobileScrollTurn + manualRotation.x;
+      sculpture.root.rotation.x = easedPointer.y * 0.1 + Math.sin(elapsed * 0.18) * 0.025 + storyProgress * (mobileQuality ? 0.2 : 0) + manualRotation.y;
       sculpture.root.position.x = easedPointer.x * 0.13 + (mobileQuality ? Math.sin(storyProgress * Math.PI) * 0.12 : 0);
       sculpture.root.position.y = Math.sin(elapsed * 0.32) * 0.045 - storyProgress * (mobileQuality ? 0.3 : 0.18);
       sculpture.root.scale.setScalar(1 - storyProgress * (mobileQuality ? 0.07 : 0.055));
@@ -281,7 +292,10 @@ export function initHeroScene(container) {
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
       if (!container.classList.contains("webgl-ready")) container.classList.add("webgl-ready");
-      if (!reducedMotion.matches && !mobileQuality) frameId = window.requestAnimationFrame(renderFrame);
+      const inertiaActive = rotationVelocity.lengthSq() >= 0.0004;
+      if ((!reducedMotion.matches && !mobileQuality) || activePointerId !== null || inertiaActive) {
+        frameId = window.requestAnimationFrame(renderFrame);
+      }
     };
 
     const requestRender = () => {
@@ -289,13 +303,51 @@ export function initHeroScene(container) {
     };
 
     const onPointerMove = event => {
-      if (reducedMotion.matches) return;
       const bounds = container.getBoundingClientRect();
+      if (activePointerId === event.pointerId) {
+        const now = event.timeStamp;
+        const elapsed = Math.max((now - lastDragAt) / 1000, 1 / 120);
+        const deltaX = (event.clientX - lastDragX) / bounds.width * Math.PI * 2;
+        const deltaY = (event.clientY - lastDragY) / bounds.height * Math.PI * 2;
+        manualRotation.x += deltaX;
+        manualRotation.y = THREE.MathUtils.clamp(manualRotation.y + deltaY, -Math.PI * 0.48, Math.PI * 0.48);
+        rotationVelocity.set(
+          THREE.MathUtils.clamp(deltaX / elapsed, -5, 5),
+          THREE.MathUtils.clamp(deltaY / elapsed, -5, 5)
+        );
+        lastDragX = event.clientX;
+        lastDragY = event.clientY;
+        lastDragAt = now;
+        requestRender();
+        return;
+      }
+      if (reducedMotion.matches) return;
       pointer.x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
       pointer.y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
       requestRender();
     };
+    const onPointerDown = event => {
+      if (event.button !== 0 || !event.isPrimary) return;
+      activePointerId = event.pointerId;
+      lastDragX = event.clientX;
+      lastDragY = event.clientY;
+      lastDragAt = event.timeStamp;
+      rotationVelocity.set(0, 0);
+      renderer.domElement.classList.add("is-dragging");
+      renderer.domElement.setPointerCapture(event.pointerId);
+      requestRender();
+    };
+    const onPointerUp = event => {
+      if (activePointerId !== event.pointerId) return;
+      activePointerId = null;
+      renderer.domElement.classList.remove("is-dragging");
+      if (renderer.domElement.hasPointerCapture(event.pointerId)) {
+        renderer.domElement.releasePointerCapture(event.pointerId);
+      }
+      requestRender();
+    };
     const onPointerLeave = () => {
+      if (activePointerId !== null) return;
       pointer.set(0, 0);
       requestRender();
     };
@@ -341,6 +393,9 @@ export function initHeroScene(container) {
     intersectionObserver.observe(container);
     container.addEventListener("pointermove", onPointerMove, { passive: true });
     container.addEventListener("pointerleave", onPointerLeave, { passive: true });
+    renderer.domElement.addEventListener("pointerdown", onPointerDown);
+    renderer.domElement.addEventListener("pointerup", onPointerUp);
+    renderer.domElement.addEventListener("pointercancel", onPointerUp);
     document.addEventListener("visibilitychange", onVisibilityChange);
     mediaQuery.addEventListener?.("change", onViewportChange);
     renderer.domElement.addEventListener("webglcontextlost", onContextLost);
@@ -360,6 +415,9 @@ export function initHeroScene(container) {
         intersectionObserver?.disconnect();
         container.removeEventListener("pointermove", onPointerMove);
         container.removeEventListener("pointerleave", onPointerLeave);
+        renderer.domElement.removeEventListener("pointerdown", onPointerDown);
+        renderer.domElement.removeEventListener("pointerup", onPointerUp);
+        renderer.domElement.removeEventListener("pointercancel", onPointerUp);
         document.removeEventListener("visibilitychange", onVisibilityChange);
         mediaQuery.removeEventListener?.("change", onViewportChange);
         renderer.domElement.removeEventListener("webglcontextlost", onContextLost);
