@@ -52,14 +52,6 @@ menu?.querySelectorAll("a").forEach(link => {
   });
 });
 
-document.addEventListener("keydown", event => {
-  if (event.key !== "Escape" || menuToggle?.getAttribute("aria-expanded") !== "true") return;
-  menu.classList.remove("is-open");
-  menuToggle.setAttribute("aria-expanded", "false");
-  menuToggle.setAttribute("aria-label", "Open navigation");
-  menuToggle.focus();
-});
-
 document.querySelectorAll(".weekend-heading").forEach(button => {
   button.addEventListener("click", () => {
     const expanded = button.getAttribute("aria-expanded") === "true";
@@ -68,6 +60,52 @@ document.querySelectorAll(".weekend-heading").forEach(button => {
     content.hidden = expanded;
     button.querySelector(".weekend-toggle").textContent = expanded ? "+" : "−";
   });
+});
+
+const skillDialog = document.querySelector("#skill-dialog");
+const skillDialogCategory = document.querySelector("#skill-dialog-category");
+const skillDialogTitle = document.querySelector("#skill-dialog-title");
+const skillDialogDescription = document.querySelector("#skill-dialog-description");
+const skillDialogMessage = document.querySelector("#skill-dialog-message");
+const skillDialogJoin = document.querySelector("#skill-dialog-join");
+const skillDialogPending = document.querySelector("#skill-dialog-pending");
+
+document.querySelector("#skills-grid")?.addEventListener("click", event => {
+  const skillButton = event.target.closest(".skill-item");
+  if (!skillButton) return;
+
+  skillDialogCategory.textContent = skillButton.dataset.skillCategory;
+  skillDialogTitle.textContent = skillButton.dataset.skillName;
+  skillDialogDescription.textContent = skillButton.dataset.skillDescription;
+  skillDialogJoin.hidden = !skillButton.dataset.whatsappUrl;
+  if (skillButton.dataset.whatsappUrl) skillDialogJoin.href = skillButton.dataset.whatsappUrl;
+  else skillDialogJoin.removeAttribute("href");
+  skillDialogPending.hidden = Boolean(skillButton.dataset.whatsappUrl);
+  skillDialogMessage.textContent = skillButton.dataset.whatsappUrl
+    ? "Join the WhatsApp group to connect with others learning this skill."
+    : "The WhatsApp group for this skill is being prepared. Please check back soon.";
+  skillDialog.showModal();
+});
+
+skillDialog?.addEventListener("click", event => {
+  if (event.target === skillDialog) skillDialog.close();
+});
+
+skillDialog?.addEventListener("cancel", event => {
+  event.preventDefault();
+  skillDialog.close();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && skillDialog?.open) {
+    skillDialog.close();
+    return;
+  }
+  if (event.key !== "Escape" || menuToggle?.getAttribute("aria-expanded") !== "true") return;
+  menu.classList.remove("is-open");
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.setAttribute("aria-label", "Open navigation");
+  menuToggle.focus();
 });
 
 const sections = [...document.querySelectorAll("main section[id]")];

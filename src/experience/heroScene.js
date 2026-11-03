@@ -40,6 +40,8 @@ function createSculpture(scene, mobileQuality) {
 
   const core = addMesh(root, new THREE.IcosahedronGeometry(0.68, mobileQuality ? 1 : 2), accent, [-0.12, 0.28, 0.18], [0.2, 0.1, -0.14]);
   core.name = "transformation-crystal";
+  core.userData.baseX = core.rotation.x;
+  core.userData.baseY = core.rotation.y;
 
   const innerCore = addMesh(
     root,
@@ -58,6 +60,8 @@ function createSculpture(scene, mobileQuality) {
   ].forEach(({ radius, tube, rotation, material }, index) => {
     const ring = addMesh(root, new THREE.TorusGeometry(radius, tube, 8, mobileQuality ? 64 : 128), material, [-0.12, 0.28, 0], rotation);
     ring.userData.spin = index % 2 ? -1 : 1;
+    ring.userData.baseX = rotation[0];
+    ring.userData.baseZ = rotation[2];
     rings.push(ring);
   });
 
@@ -166,6 +170,7 @@ export function initHeroScene(container) {
   const frameInterval = mobileQuality ? 1000 / 24 : 1000 / 30;
   const scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2("#edf2fb", 0.055);
+  let baseCameraZ = 8.1;
 
   try {
     renderer = new THREE.WebGLRenderer({
@@ -215,7 +220,8 @@ export function initHeroScene(container) {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mediaQuery.matches ? 0.85 : mobileQuality ? 1 : 1.55));
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
-      camera.position.z = width < 500 ? 7.4 : width < 760 ? 8.3 : 8.1;
+      baseCameraZ = width < 500 ? 7.4 : width < 760 ? 8.3 : 8.1;
+      camera.position.z = baseCameraZ;
       camera.updateProjectionMatrix();
     };
 
@@ -233,33 +239,49 @@ export function initHeroScene(container) {
       previousFrameAt = currentTime;
       easedPointer.lerp(pointer, 1 - Math.exp(-delta * 3.2));
 
-      sculpture.root.rotation.y = easedPointer.x * 0.18 + Math.sin(elapsed * 0.12) * 0.045;
-      sculpture.root.rotation.x = easedPointer.y * 0.1 + Math.sin(elapsed * 0.18) * 0.025;
-      sculpture.root.position.x = easedPointer.x * 0.13;
-      sculpture.root.position.y = Math.sin(elapsed * 0.32) * 0.045 - storyProgress * 0.18;
-      sculpture.root.scale.setScalar(1 - storyProgress * 0.055);
-      sculpture.core.rotation.y += delta * (0.18 + storyProgress * 0.12);
-      sculpture.core.rotation.x += delta * 0.11;
-      sculpture.innerCore.rotation.y -= delta * 0.22;
+      const mobileScrollTurn = mobileQuality ? storyProgress * 0.9 : 0;
+      sculpture.root.rotation.y = easedPointer.x * 0.18 + Math.sin(elapsed * 0.12) * 0.045 + mobileScrollTurn;
+      sculpture.root.rotation.x = easedPointer.y * 0.1 + Math.sin(elapsed * 0.18) * 0.025 + storyProgress * (mobileQuality ? 0.2 : 0);
+      sculpture.root.position.x = easedPointer.x * 0.13 + (mobileQuality ? Math.sin(storyProgress * Math.PI) * 0.12 : 0);
+      sculpture.root.position.y = Math.sin(elapsed * 0.32) * 0.045 - storyProgress * (mobileQuality ? 0.3 : 0.18);
+      sculpture.root.scale.setScalar(1 - storyProgress * (mobileQuality ? 0.07 : 0.055));
+      if (mobileQuality) {
+        sculpture.core.rotation.y = sculpture.core.userData.baseY + storyProgress * 0.72;
+        sculpture.core.rotation.x = sculpture.core.userData.baseX + storyProgress * 0.2;
+      } else {
+        sculpture.core.rotation.y += delta * (0.18 + storyProgress * 0.12);
+        sculpture.core.rotation.x += delta * 0.11;
+      }
+      sculpture.innerCore.rotation.y -= delta * (mobileQuality ? 0 : 0.22);
+      if (mobileQuality) sculpture.innerCore.rotation.z = storyProgress * 0.18;
       sculpture.rings.forEach((ring, index) => {
-        ring.rotation.z += delta * (0.018 + index * 0.009) * ring.userData.spin;
-        ring.rotation.x += delta * 0.007 * (index + 1);
+        const rotationSpeed = mobileQuality ? 0 : (0.018 + index * 0.009) * ring.userData.spin;
+        ring.rotation.z += delta * rotationSpeed;
+        ring.rotation.x += delta * (mobileQuality ? 0 : 0.007 * (index + 1));
+        if (mobileQuality) {
+          ring.rotation.z = ring.userData.baseZ + storyProgress * (0.44 + index * 0.08) * ring.userData.spin;
+          ring.rotation.x = ring.userData.baseX + storyProgress * 0.18 * ring.userData.spin;
+        }
       });
-      sculpture.ribbon.rotation.y = Math.sin(elapsed * 0.25) * 0.06 + storyProgress * 0.1;
+      sculpture.ribbon.rotation.y = (mobileQuality ? 0 : Math.sin(elapsed * 0.25) * 0.06) + storyProgress * (mobileQuality ? 0.3 : 0.1);
       sculpture.satellites.forEach((object, index) => {
         object.position.y += (Math.sin(elapsed * 0.8 + object.userData.floatOffset) * 0.035 - (object.userData.lastFloat || 0));
         object.userData.lastFloat = Math.sin(elapsed * 0.8 + object.userData.floatOffset) * 0.035;
-        object.rotation.x += delta * (0.18 + index * 0.025);
-        object.rotation.y += delta * 0.21;
+        object.rotation.x += delta * (mobileQuality ? 0 : 0.18 + index * 0.025);
+        object.rotation.y += delta * (mobileQuality ? 0 : 0.21);
+        if (mobileQuality) object.rotation.y = storyProgress * 0.55 + index * 0.3;
       });
-      sculpture.particles.rotation.y = elapsed * 0.012;
+      sculpture.particles.rotation.y = (mobileQuality ? 0 : elapsed * 0.012) + storyProgress * (mobileQuality ? 0.22 : 0);
       blueLight.intensity = (mobileQuality ? 16 : 30) + Math.sin(elapsed * 0.6) * (mobileQuality ? 2 : 4) + storyProgress * (mobileQuality ? 5 : 12);
       camera.position.x += (easedPointer.x * (mobileQuality ? 0.1 : 0.2) - camera.position.x) * Math.min(delta * 1.8, 1);
-      camera.position.y += (easedPointer.y * (mobileQuality ? -0.07 : -0.14) - storyProgress * 0.08 - camera.position.y) * Math.min(delta * 1.8, 1);
+      camera.position.y += (easedPointer.y * (mobileQuality ? -0.07 : -0.14) - storyProgress * (mobileQuality ? 0.28 : 0.08) - camera.position.y) * Math.min(delta * 1.8, 1);
+      if (mobileQuality) {
+        camera.position.z += (baseCameraZ - storyProgress * 0.5 - camera.position.z) * Math.min(delta * 2.4, 1);
+      }
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
       if (!container.classList.contains("webgl-ready")) container.classList.add("webgl-ready");
-      if (!reducedMotion.matches) frameId = window.requestAnimationFrame(renderFrame);
+      if (!reducedMotion.matches && !mobileQuality) frameId = window.requestAnimationFrame(renderFrame);
     };
 
     const requestRender = () => {

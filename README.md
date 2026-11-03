@@ -61,7 +61,7 @@ Netlify installs the dependencies from `package-lock.json` before running the bu
 
 ## 6. Updating skills
 
-Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. The skills component and category-accent styling use these entries; preserve unique IDs for stable in-page anchors.
+Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. Clicking a skill opens its group-information dialog. When a group's WhatsApp invite is ready, add its URL as `whatsappUrl` on that skill entry; until then the dialog clearly says the link is coming soon. The skills component and category-accent styling use these entries; preserve unique IDs for stable in-page anchors.
 
 ## 7. Editing the programme
 

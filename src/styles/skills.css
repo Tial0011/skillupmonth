@@ -16,12 +16,20 @@
 .skill-item {
   --skill-accent: #285ee3;
   position: relative;
+  display: block;
   min-width: 0;
   min-height: 302px;
   padding: 18px 17px 19px;
   border-right: 1px solid #cbd2dc;
   border-bottom: 1px solid #cbd2dc;
+  border-top: 0;
+  border-left: 0;
   background: rgba(251,252,253,.72);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
   transition: background var(--duration-medium) var(--ease-out), transform var(--duration-medium) var(--ease-out), box-shadow var(--duration-medium) var(--ease-out);
 }
 .skill-item[data-category="Creative & Practical"] { --skill-accent: #d26479; }
@@ -65,3 +73,33 @@
 .skill-item:nth-child(7n + 5) .skill-art { border-radius: 0 0 45% 0; }
 .skill-item:nth-child(9n + 1) { background: #f9fafb; }
 .skills-footnote { margin-top: 18px; color: var(--color-muted); font-size: 10px; }
+
+.skill-dialog {
+  position: fixed;
+  inset: 0;
+  width: min(440px, calc(100% - 32px));
+  max-width: none;
+  max-height: min(620px, calc(100% - 32px));
+  margin: auto;
+  padding: clamp(26px, 6vw, 42px);
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.92);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(216,228,250,.72), transparent 48%),
+    var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: 0 30px 100px rgba(13,28,54,.24);
+}
+.skill-dialog[open] { animation: skill-dialog-in 260ms var(--ease-out) both; }
+.skill-dialog::backdrop { background: rgba(15,25,42,.48); backdrop-filter: blur(5px); }
+@keyframes skill-dialog-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.skill-dialog-form { position: absolute; top: 14px; right: 14px; }
+.skill-dialog-close { display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--color-line); border-radius: 50%; background: rgba(255,255,255,.78); color: var(--color-ink); font-size: 22px; line-height: 1; }
+.skill-dialog-category { padding-right: 38px; }
+.skill-dialog-index { margin-top: 29px; color: var(--color-muted); font-size: 8px; font-weight: 700; letter-spacing: .16em; }
+.skill-dialog h2 { margin-top: 8px; font-family: var(--font-display); font-size: clamp(32px, 8vw, 48px); line-height: 1; letter-spacing: -.06em; font-weight: 600; }
+.skill-dialog-description { margin-top: 15px; color: var(--color-muted); font-size: 12px; }
+.skill-dialog-message { margin-top: 25px; padding: 15px; border-left: 2px solid var(--color-blue); background: rgba(233,239,255,.8); color: #46556c; font-size: 11px; }
+.skill-dialog-join { margin-top: 20px; }
+.skill-dialog-join[hidden], .skill-dialog-pending[hidden] { display: none; }
+.skill-dialog-pending { display: inline-flex; align-items: center; min-height: 46px; margin-top: 18px; padding: 0 15px; border: 1px solid var(--color-line); color: var(--color-muted); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
