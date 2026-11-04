@@ -19,7 +19,7 @@ export function Skills() {
         <div class="section-heading">
           <div class="section-index"><span>02</span><i></i> FIND YOUR NEXT SKILL</div>
           <p class="eyebrow">YOUR NEXT POSSIBILITY</p>
-          <h2 id="skills-title">20 SKILLS.<br><span>ONE EVENT.</span></h2>
+          <h2 id="skills-title">${skillItems.length} SKILLS.<br><span>ONE EVENT.</span></h2>
           <p class="section-intro">Discover a skill. Unlock a new possibility. Explore the programme experiences lined up for November.</p>
         </div>
         <div class="skills-grid" id="skills-grid">${items}</div>
