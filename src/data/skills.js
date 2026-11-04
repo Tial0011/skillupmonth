@@ -15,11 +15,11 @@ export const skills = [
   { id: "3d-animation", name: "3D Animation", category: "Digital & Creative", visual: "A discipline for creating movement in three-dimensional space.", whatsappUrl: "https://chat.whatsapp.com/DFT5474WQvKAeP0ek5Vxw0?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "lip-gloss-making", name: "Lip Gloss Making", category: "Creative & Practical", visual: "A practical product-making session.", whatsappUrl: "https://chat.whatsapp.com/I75ZCM4qi7M9PTpJij1ZCP?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "lash-nail-making", name: "Lash & Nail Making", category: "Creative & Practical", visual: "A beauty-focused practical session." },
-  { id: "research-data-analysis", name: "Research Skills + Data Analysis", category: "Academic & Professional", visual: "A combined research and data analysis session." },
-  { id: "bead-making", name: "Bead Making", category: "Creative & Practical", visual: "A hands-on jewellery and craft skill." },
-  { id: "perfume-production", name: "Perfume Production", category: "Creative & Practical", visual: "A practical fragrance production session." },
+  { id: "research-data-analysis", name: "Research Skills + Data Analysis", category: "Academic & Professional", visual: "A combined research and data analysis session.", whatsappUrl: "https://chat.whatsapp.com/F7kf1Rbb8izK7ch4FWKc1p?s=sw&p=a&mlu=4&ilr=4&iam=2" },
+  { id: "bead-making", name: "Bead Making", category: "Creative & Practical", visual: "A hands-on jewellery and craft skill.", whatsappUrl: "https://chat.whatsapp.com/HUkH7Yx44LGLuH4HR8VsQc?s=sw&p=a&mlu=4&ilr=4&iam=2" },
+  { id: "perfume-production", name: "Perfume Production", category: "Creative & Practical", visual: "A practical fragrance production session.", whatsappUrl: "https://chat.whatsapp.com/IbQ3qeTRxdeDk3Zq9pfJcN?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "video-editing", name: "Video Editing", category: "Digital & Creative", visual: "A post-production and visual storytelling skill.", whatsappUrl: "https://chat.whatsapp.com/IWzjvdz2qONH9GgYcbGEp9?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "cv-linkedin", name: "CV Writing & LinkedIn", category: "Academic & Professional", visual: "Building a professional profile and career materials.", whatsappUrl: "https://chat.whatsapp.com/GUYpRCBzcvHDLJ1RcE71ru?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "professional-development", name: "Professional Development", category: "Academic & Professional", visual: "A session focused on professional growth." },
-  { id: "basic-life-support", name: "Basic Life Support (BLS)", category: "Health & Safety", visual: "A practical life-support training session." }
+  { id: "basic-life-support", name: "Basic Life Support (BLS)", category: "Health & Safety", visual: "A practical life-support training session.", whatsappUrl: "https://chat.whatsapp.com/GFReLSpIqjVJRshWBroKbr?s=sw&p=a&mlu=4&ilr=4&iam=2" }
 ];
