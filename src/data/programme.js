@@ -27,7 +27,7 @@ export const programme = [
       { day: "Saturday", period: "Morning", sessions: [{ name: "Photography" }] },
       { day: "Saturday", period: "Afternoon", sessions: [{ name: "AI Literacy" }] },
       { day: "Saturday", period: "Evening", sessions: [{ name: "3D Animation" }] },
-      { day: "Sunday", period: "", sessions: [{ name: "Lip Gloss Making" }, { name: "Lash & Nail Making", note: "Concurrent" }] }
+      { day: "Sunday", period: "", sessions: [{ name: "Lip Gloss Making" }] }
     ]
   },
   {
