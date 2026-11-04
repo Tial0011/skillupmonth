@@ -1,7 +1,9 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { skills } from "../data/skills.js";
+import { skills as programmeItems } from "../data/skills.js";
+
+const skills = programmeItems.filter(skill => skill.type !== "event");
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 

@@ -2,7 +2,7 @@ import { siteConfig } from "../config/siteConfig.js";
 import { skills } from "../data/skills.js";
 
 export function Hero() {
-  const skillNames = skills.map(skill => skill.name).join(", ");
+  const skillNames = skills.filter(skill => skill.type !== "event").map(skill => skill.name).join(", ");
 
   return `
     <section class="hero section" id="home" aria-labelledby="hero-title">

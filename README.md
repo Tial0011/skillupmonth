@@ -61,7 +61,7 @@ Netlify installs the dependencies from `package-lock.json` before running the bu
 
 ## 6. Updating skills
 
-Edit `src/data/skills.js`. Each entry has an `id`, `name`, `category` and `visual` description. Skills appear as regions on the hero globe; clicking a visible globe label or a skill card opens its detail dialog. When a group's WhatsApp invite is ready, add its URL as `whatsappUrl` on that skill entry; until then the dialog clearly says the link is coming soon. The skills component and globe use these entries; preserve unique IDs for stable in-page anchors.
+Edit `src/data/skills.js`. Each skill entry has an `id`, `name`, `category` and `visual` description. Skills appear as regions on the hero globe; clicking a visible globe label or a skill card opens its detail dialog. When a group's WhatsApp invite is ready, add its URL as `whatsappUrl` on that skill entry; until then the dialog clearly says the link is coming soon. Filmmaking is one skill with one group link; its two programme sessions remain separate in the calendar. Excelencia is an event, not a skill: it is marked `type: "event"` and shown as a separate featured event card linking to the programme calendar, so it does not appear on the skills globe. Preserve unique IDs for stable in-page anchors.
 
 ## 7. Editing the programme
 
