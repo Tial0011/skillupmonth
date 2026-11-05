@@ -1,4 +1,4 @@
-import { programme, programmeNote } from "../data/programme.js";
+import { programme } from "../data/programme.js";
 import { escapeHTML } from "../utils/helpers.js";
 
 export function Programme() {
@@ -30,7 +30,6 @@ export function Programme() {
           <p class="section-intro">Your journey through Skill-Up Month starts here. Explore the programme by weekend.</p>
         </div>
         <div class="programme-list">${weekends}</div>
-        <p class="programme-note"><strong>PLEASE NOTE</strong>${escapeHTML(programmeNote)}</p>
       </div>
     </section>`;
 }

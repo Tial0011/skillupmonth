@@ -3,9 +3,7 @@ export const programme = [
   {
     id: "weekend-1", title: "Weekend 1", dates: "6–8 November",
     days: [
-      { day: "Friday", period: "Evening", sessions: [{ name: "Public Speaking" }] },
       { day: "Saturday", period: "Morning", sessions: [{ name: "Gele Tying" }] },
-      { day: "Saturday", period: "Afternoon", sessions: [{ name: "Makeup" }] },
       { day: "Saturday", period: "Evening", sessions: [{ name: "Graphic Designing" }] },
       { day: "Sunday", period: "", sessions: [{ name: "Website Development" }] }
     ]
@@ -34,12 +32,10 @@ export const programme = [
     id: "weekend-4", title: "Weekend 4", dates: "27–29 November",
     days: [
       { day: "Friday", period: "Evening", sessions: [{ name: "Research Skills + Data Analysis", note: "Combined Session" }] },
-      { day: "Saturday", period: "Morning", sessions: [{ name: "Bead Making" }, { name: "Perfume Production", note: "Concurrent" }] },
+      { day: "Saturday", period: "Morning", sessions: [{ name: "Bead Making" }] },
       { day: "Saturday", period: "Afternoon", sessions: [{ name: "Video Editing" }] },
-      { day: "Saturday", period: "Evening", sessions: [{ name: "CV Writing & LinkedIn" }, { name: "Professional Development", note: "Concurrent" }] },
+      { day: "Saturday", period: "Evening", sessions: [{ name: "CV Writing & LinkedIn" }] },
       { day: "Sunday", period: "", sessions: [{ name: "Basic Life Support (BLS)" }] }
     ]
   }
 ];
-
-export const programmeNote = "Saturday, 28 November: concurrent sessions will run in separate venues with separate facilitators.";
