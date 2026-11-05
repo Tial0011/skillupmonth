@@ -41,10 +41,9 @@
   .skill-art { height: 105px; }
   .skill-item h3 { font-size: 14px; }
   .skill-item p { font-size: 9px; }
-  .featured-event { grid-template-columns: 1fr auto; gap: 18px; }
+  .featured-event { grid-template-columns: 1fr; gap: 18px; }
   .featured-event-index { grid-column: 1 / -1; }
   .featured-event-copy { grid-column: 1; }
-  .featured-event-cta { grid-column: 2; grid-row: 2; min-width: 150px; }
   .weekend-heading { grid-template-columns: 58px 1fr 28px; gap: 12px; padding: 19px 2px 19px 0; }
   .weekend-number { font-size: 35px; }
   .weekend-title strong { font-size: 18px; }
@@ -72,8 +71,7 @@
   .skill-item h3 { font-size: 16px; }
   .skill-item p { font-size: 10px; }
   .featured-event { grid-template-columns: 1fr; gap: 17px; padding: 22px; }
-  .featured-event-index, .featured-event-copy, .featured-event-cta { grid-column: 1; grid-row: auto; }
-  .featured-event-cta { min-width: 0; }
+  .featured-event-index, .featured-event-copy { grid-column: 1; grid-row: auto; }
   .weekend-heading { grid-template-columns: 45px 1fr 26px; gap: 8px; }
   .weekend-number { font-size: 29px; }
   .weekend-title strong { font-size: 16px; }

@@ -3,7 +3,7 @@ import { escapeHTML } from "../utils/helpers.js";
 
 export function Skills() {
   const skillItems = skills.filter(skill => skill.type !== "event");
-  const featuredEvent = skills.find(skill => skill.type === "event");
+  const eventItems = skills.filter(skill => skill.type === "event");
   const items = skillItems.map((skill, index) => `
     <button class="skill-item" id="skill-${escapeHTML(skill.id)}" type="button" data-category="${escapeHTML(skill.category)}" data-skill-name="${escapeHTML(skill.name)}" data-skill-category="${escapeHTML(skill.category)}" data-skill-description="${escapeHTML(skill.visual)}" data-whatsapp-url="${escapeHTML(skill.whatsappUrl || "")}" aria-label="View ${escapeHTML(skill.name)} WhatsApp group information" data-reveal>
       <div class="skill-topline"><span>${String(index + 1).padStart(2, "0")}</span><span>${escapeHTML(skill.category)}</span></div>
@@ -19,20 +19,19 @@ export function Skills() {
         <div class="section-heading">
           <div class="section-index"><span>02</span><i></i> FIND YOUR NEXT SKILL</div>
           <p class="eyebrow">YOUR NEXT POSSIBILITY</p>
-          <h2 id="skills-title">${skillItems.length} SKILLS.<br><span>ONE EVENT.</span></h2>
+          <h2 id="skills-title">${skillItems.length} SKILLS.<br><span>${eventItems.length} EVENT${eventItems.length === 1 ? "" : "S"}.</span></h2>
           <p class="section-intro">Discover a skill. Unlock a new possibility. Explore the programme experiences lined up for November.</p>
         </div>
         <div class="skills-grid" id="skills-grid">${items}</div>
-        ${featuredEvent ? `
-          <a class="featured-event" href="#programme" data-reveal aria-label="View Excelencia in the programme calendar">
-            <span class="featured-event-index">FEATURED EVENT <i></i> 01</span>
+        ${eventItems.map((event, index) => `
+          <div class="featured-event" data-reveal>
+            <span class="featured-event-index">FEATURED EVENT <i></i> ${String(index + 1).padStart(2, "0")}</span>
             <span class="featured-event-copy">
               <span class="eyebrow">NOT A SKILL — A SPECIAL EVENT</span>
-              <strong>${escapeHTML(featuredEvent.name)}</strong>
-              <span>${escapeHTML(featuredEvent.visual)}</span>
+              <strong>${escapeHTML(event.name)}</strong>
+              <span>${escapeHTML(event.visual)}</span>
             </span>
-            <span class="featured-event-cta">Explore the programme <b aria-hidden="true">↗</b></span>
-          </a>` : ""}
+          </div>`).join("")}
         <p class="skills-footnote">Explore the programme calendar for the scheduled dates and sessions.</p>
       </div>
       <dialog class="skill-dialog" id="skill-dialog" aria-labelledby="skill-dialog-title" aria-describedby="skill-dialog-message">

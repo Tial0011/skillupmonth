@@ -5,6 +5,7 @@ export const skills = [
   { id: "graphic-designing", name: "Graphic Designing", category: "Digital & Creative", visual: "A visual communication and design discipline.", whatsappUrl: "https://chat.whatsapp.com/Hc9bjyuLz7fLn8KFFJVIRJ?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "website-development", name: "Website Development", category: "Digital & Technology", visual: "An introduction to building for the web.", whatsappUrl: "https://chat.whatsapp.com/Ipi8Uhw2JTLHx3TDDaGy4G?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "excelencia", name: "Excelencia", category: "Event", type: "event", visual: "Join Excelencia, a special event featured in the Skill-Up Month programme." },
+  { id: "japa-series-2", name: "Japa Series 2.0", category: "Event", type: "event", visual: "Japa Series 2.0, a special event featured in the Skill-Up Month programme." },
   { id: "filmmaking", name: "Filmmaking", category: "Digital & Creative", visual: "A two-part programme in planning and creating films.", whatsappUrl: "https://chat.whatsapp.com/IoN2VAGCRgbBo1bKQ2iFbE?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "china-importation", name: "China Importation", category: "Business", visual: "A practical business and importation topic.", whatsappUrl: "https://chat.whatsapp.com/Hgv1zYHkhxS2J7wKHuL0NP?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "crocheting", name: "Crocheting", category: "Creative & Practical", visual: "A hands-on textile craft.", whatsappUrl: "https://chat.whatsapp.com/KrVGN0f7vfiBMhRVAiCczv?s=sw&p=a&mlu=4&ilr=4&iam=2" },
