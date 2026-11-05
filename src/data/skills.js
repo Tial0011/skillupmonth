@@ -1,9 +1,7 @@
 // Programme entries are based on the supplied November 2026 calendar.
 // The two filmmaking programme sessions share one skill entry and group invite.
 export const skills = [
-  { id: "public-speaking", name: "Public Speaking", category: "Communication", visual: "A space for confident communication and expression.", whatsappUrl: "https://chat.whatsapp.com/EyTnavrvAJ90WdMxInK3YB?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "gele-tying", name: "Gele Tying", category: "Creative & Practical", visual: "A creative styling and fabric-focused skill.", whatsappUrl: "https://chat.whatsapp.com/JNEaLkmE73TIJrZRcAGFPr?s=sw&p=a&mlu=4&ilr=4&iam=2" },
-  { id: "makeup", name: "Makeup", category: "Creative & Practical", visual: "A beauty and creative application skill.", whatsappUrl: "https://chat.whatsapp.com/E7vcNqzhTXo2Yt55C62zsu?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "graphic-designing", name: "Graphic Designing", category: "Digital & Creative", visual: "A visual communication and design discipline.", whatsappUrl: "https://chat.whatsapp.com/Hc9bjyuLz7fLn8KFFJVIRJ?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "website-development", name: "Website Development", category: "Digital & Technology", visual: "An introduction to building for the web.", whatsappUrl: "https://chat.whatsapp.com/Ipi8Uhw2JTLHx3TDDaGy4G?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "excelencia", name: "Excelencia", category: "Event", type: "event", visual: "Join Excelencia, a special event featured in the Skill-Up Month programme." },
@@ -16,9 +14,7 @@ export const skills = [
   { id: "lip-gloss-making", name: "Lip Gloss Making", category: "Creative & Practical", visual: "A practical product-making session.", whatsappUrl: "https://chat.whatsapp.com/I75ZCM4qi7M9PTpJij1ZCP?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "research-data-analysis", name: "Research Skills + Data Analysis", category: "Academic & Professional", visual: "A combined research and data analysis session.", whatsappUrl: "https://chat.whatsapp.com/F7kf1Rbb8izK7ch4FWKc1p?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "bead-making", name: "Bead Making", category: "Creative & Practical", visual: "A hands-on jewellery and craft skill.", whatsappUrl: "https://chat.whatsapp.com/HUkH7Yx44LGLuH4HR8VsQc?s=sw&p=a&mlu=4&ilr=4&iam=2" },
-  { id: "perfume-production", name: "Perfume Production", category: "Creative & Practical", visual: "A practical fragrance production session.", whatsappUrl: "https://chat.whatsapp.com/IbQ3qeTRxdeDk3Zq9pfJcN?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "video-editing", name: "Video Editing", category: "Digital & Creative", visual: "A post-production and visual storytelling skill.", whatsappUrl: "https://chat.whatsapp.com/IWzjvdz2qONH9GgYcbGEp9?s=sw&p=a&mlu=4&ilr=4&iam=2" },
   { id: "cv-linkedin", name: "CV Writing & LinkedIn", category: "Academic & Professional", visual: "Building a professional profile and career materials.", whatsappUrl: "https://chat.whatsapp.com/GUYpRCBzcvHDLJ1RcE71ru?s=sw&p=a&mlu=4&ilr=4&iam=2" },
-  { id: "professional-development", name: "Professional Development", category: "Academic & Professional", visual: "A session focused on professional growth." },
   { id: "basic-life-support", name: "Basic Life Support (BLS)", category: "Health & Safety", visual: "A practical life-support training session.", whatsappUrl: "https://chat.whatsapp.com/GFReLSpIqjVJRshWBroKbr?s=sw&p=a&mlu=4&ilr=4&iam=2" }
 ];
